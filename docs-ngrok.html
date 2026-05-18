@@ -6,18 +6,12 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="static/css/styles.css" rel="stylesheet"/>
+    <script src="static/js/tailwind-config.js"></script>
     <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        body {
-            font-family: 'Geist', sans-serif;
-            background-color: #051424;
-            color: #d4e4fa;
-            -webkit-font-smoothing: antialiased;
-        }
         /* Sidebar transitions */
-        #sidebar {
+        /* sidebar + theme styles now in static/css/styles.css */
+        /* KEEP marker */ #sidebar {
             transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             white-space: nowrap;
@@ -154,98 +148,7 @@
             color: #c3c0ff;
         }
     </style>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#c3c0ff",
-                        "primary-fixed": "#e2dfff",
-                        "on-tertiary-fixed-variant": "#653e00",
-                        "error-container": "#93000a",
-                        "surface-variant": "#273647",
-                        "surface": "#051424",
-                        "tertiary-fixed-dim": "#ffb95f",
-                        "primary-container": "#4f46e5",
-                        "on-secondary-fixed-variant": "#005236",
-                        "on-background": "#d4e4fa",
-                        "error": "#ffb4ab",
-                        "tertiary-fixed": "#ffddb8",
-                        "secondary-container": "#00a572",
-                        "on-error-container": "#ffdad6",
-                        "surface-container-low": "#0d1c2d",
-                        "on-primary": "#1d00a5",
-                        "outline-variant": "#464555",
-                        "on-tertiary-fixed": "#2a1700",
-                        "on-tertiary-container": "#ffd4a4",
-                        "on-secondary": "#003824",
-                        "surface-bright": "#2c3a4c",
-                        "inverse-on-surface": "#233143",
-                        "on-surface": "#d4e4fa",
-                        "on-primary-fixed": "#0f0069",
-                        "inverse-surface": "#d4e4fa",
-                        "tertiary": "#ffb95f",
-                        "secondary-fixed": "#6ffbbe",
-                        "outline": "#918fa1",
-                        "secondary-fixed-dim": "#4edea3",
-                        "primary-fixed-dim": "#c3c0ff",
-                        "on-tertiary": "#472a00",
-                        "on-secondary-fixed": "#002113",
-                        "surface-container": "#122131",
-                        "secondary": "#4edea3",
-                        "background": "#051424",
-                        "surface-container-lowest": "#010f1f",
-                        "tertiary-container": "#885500",
-                        "on-surface-variant": "#c7c4d8",
-                        "inverse-primary": "#4d44e3",
-                        "on-error": "#690005",
-                        "surface-container-high": "#1c2b3c",
-                        "on-secondary-container": "#00311f",
-                        "surface-dim": "#051424",
-                        "surface-tint": "#c3c0ff",
-                        "surface-container-highest": "#273647",
-                        "on-primary-container": "#dad7ff",
-                        "on-primary-fixed-variant": "#3323cc"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "unit": "4px",
-                        "sidebar-width": "260px",
-                        "gutter": "24px",
-                        "margin-desktop": "32px",
-                        "margin-mobile": "16px",
-                        "container-max": "1440px"
-                    },
-                    "fontFamily": {
-                        "title-sm": ["Geist"],
-                        "body-sm": ["Geist"],
-                        "code-md": ["JetBrains Mono"],
-                        "display-lg": ["Geist"],
-                        "headline-md": ["Geist"],
-                        "body-md": ["Geist"],
-                        "code-sm": ["JetBrains Mono"],
-                        "label-caps": ["Geist"]
-                    },
-                    "fontSize": {
-                        "title-sm": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
-                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                        "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
-                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
-                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
-                    }
-                },
-            },
-        }
-    </script>
+    <script>tailwind.config = window.CMDRUNNER_TAILWIND;</script>
 </head>
 <body class="bg-background text-on-surface">
 
@@ -681,7 +584,9 @@ Connections                   ttl     opn     rt1     rt5     p50     p90
         </div>
     </main>
 
-    <script src="sidebar.js"></script>
+    <script src="static/js/components.js"></script>
+    <script src="static/js/sidebar.js"></script>
+    <script src="static/js/app.js"></script>
     <script>
         function copyCode(btn) {
             const block = btn.closest('.code-block');

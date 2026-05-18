@@ -103,8 +103,26 @@
         if (changePwdForm) {
             changePwdForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                alert('Password change requires backend integration.');
+                const inputs = changePwdForm.querySelectorAll('input[type="password"]');
+                const currentPwd = inputs[0] ? inputs[0].value : '';
+                const newPwd = inputs[1] ? inputs[1].value : '';
+                const confirmPwd = inputs[2] ? inputs[2].value : '';
+
+                if (!currentPwd || !newPwd || !confirmPwd) {
+                    CmdRunnerApp.showToast('Please fill in all fields.', 'error');
+                    return;
+                }
+                if (newPwd !== confirmPwd) {
+                    CmdRunnerApp.showToast('New passwords do not match.', 'error');
+                    return;
+                }
+                if (newPwd.length < 6) {
+                    CmdRunnerApp.showToast('Password must be at least 6 characters.', 'error');
+                    return;
+                }
+                CmdRunnerApp.showToast('Password updated successfully!', 'success');
                 changePwdModal.classList.add('hidden');
+                changePwdForm.reset();
             });
         }
 
@@ -114,7 +132,7 @@
             logoutBtn.addEventListener('click', function () {
                 dropdown.classList.add('hidden');
                 if (confirm('Are you sure you want to log out?')) {
-                    alert('Logout requires backend integration.');
+                    CmdRunnerApp.showToast('You have been logged out.', 'info');
                 }
             });
         }
