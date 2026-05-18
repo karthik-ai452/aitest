@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #051424;
+            color: #d4e4fa;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Sidebar transitions */
+        #sidebar {
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        #sidebar.sidebar-collapsed {
+            width: 64px !important;
+        }
+        #sidebar.sidebar-collapsed .nav-label,
+        #sidebar.sidebar-collapsed .sidebar-title,
+        #sidebar.sidebar-collapsed .sidebar-subtitle,
+        #sidebar.sidebar-collapsed .sidebar-bottom-btn {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #sidebar.sidebar-collapsed .sidebar-header {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        #sidebar.sidebar-collapsed nav a {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        #sidebar.sidebar-collapsed nav a .material-symbols-outlined {
+            margin: 0;
+        }
+        #topnav, #main-content {
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #sidebar.sidebar-collapsed ~ #topnav,
+        #sidebar.sidebar-collapsed ~ #main-content {
+            margin-left: 64px !important;
+        }
+        #sidebar.sidebar-collapsed ~ #topnav {
+            width: calc(100% - 64px) !important;
+        }
+        .nav-label, .sidebar-title, .sidebar-subtitle, .sidebar-bottom-btn {
+            transition: opacity 0.15s ease, width 0.15s ease;
+        }
+        /* Code block styling */
+        .code-block {
+            background: #010f1f;
+            border: 1px solid #464555;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 22px;
+            color: #c3c0ff;
+            overflow-x: auto;
+            position: relative;
+        }
+        .code-block .comment { color: #918fa1; }
+        .code-block .command { color: #4edea3; }
+        .code-block .flag { color: #ffb95f; }
+        .code-block .url { color: #c3c0ff; text-decoration: underline; }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #273647;
+            border: 1px solid #464555;
+            border-radius: 4px;
+            padding: 4px 8px;
+            color: #918fa1;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .code-block .copy-btn:hover {
+            color: #d4e4fa;
+            background: #1c2b3c;
+        }
+        /* Step number badge */
+        .step-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        /* Tip box */
+        .tip-box {
+            background: rgba(78, 222, 163, 0.06);
+            border: 1px solid rgba(78, 222, 163, 0.2);
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        .warn-box {
+            background: rgba(255, 185, 95, 0.06);
+            border: 1px solid rgba(255, 185, 95, 0.2);
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        /* Table of contents */
+        .toc-link {
+            transition: all 0.15s;
+            border-left: 2px solid transparent;
+            padding-left: 12px;
+        }
+        .toc-link:hover, .toc-link.active {
+            border-left-color: #c3c0ff;
+            color: #c3c0ff;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#c3c0ff",
+                        "primary-fixed": "#e2dfff",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "error-container": "#93000a",
+                        "surface-variant": "#273647",
+                        "surface": "#051424",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "primary-container": "#4f46e5",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-background": "#d4e4fa",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#ffddb8",
+                        "secondary-container": "#00a572",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#0d1c2d",
+                        "on-primary": "#1d00a5",
+                        "outline-variant": "#464555",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-tertiary-container": "#ffd4a4",
+                        "on-secondary": "#003824",
+                        "surface-bright": "#2c3a4c",
+                        "inverse-on-surface": "#233143",
+                        "on-surface": "#d4e4fa",
+                        "on-primary-fixed": "#0f0069",
+                        "inverse-surface": "#d4e4fa",
+                        "tertiary": "#ffb95f",
+                        "secondary-fixed": "#6ffbbe",
+                        "outline": "#918fa1",
+                        "secondary-fixed-dim": "#4edea3",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-tertiary": "#472a00",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container": "#122131",
+                        "secondary": "#4edea3",
+                        "background": "#051424",
+                        "surface-container-lowest": "#010f1f",
+                        "tertiary-container": "#885500",
+                        "on-surface-variant": "#c7c4d8",
+                        "inverse-primary": "#4d44e3",
+                        "on-error": "#690005",
+                        "surface-container-high": "#1c2b3c",
+                        "on-secondary-container": "#00311f",
+                        "surface-dim": "#051424",
+                        "surface-tint": "#c3c0ff",
+                        "surface-container-highest": "#273647",
+                        "on-primary-container": "#dad7ff",
+                        "on-primary-fixed-variant": "#3323cc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "sidebar-width": "260px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "code-md": ["JetBrains Mono"],
+                        "display-lg": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "body-md": ["Geist"],
+                        "code-sm": ["JetBrains Mono"],
+                        "label-caps": ["Geist"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+
+    <!-- SideNavBar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-low border-r border-outline-variant flex flex-col py-margin-desktop z-50">
+        <div class="flex items-center justify-between px-6 mb-10 sidebar-header">
+            <div>
+                <h1 class="sidebar-title font-headline-md text-headline-md font-bold text-on-surface">CmdRunner</h1>
+                <p class="sidebar-subtitle font-label-caps text-label-caps text-on-surface-variant opacity-70">QA Engineering</p>
+            </div>
+            <button id="sidebar-toggle" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded hover:bg-surface-container-highest" title="Toggle sidebar">
+                <span class="material-symbols-outlined" data-icon="menu_open">menu_open</span>
+            </button>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="index.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="nav-label font-body-md text-body-md">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="suites.html">
+                <span class="material-symbols-outlined" data-icon="collections_bookmark">collections_bookmark</span>
+                <span class="nav-label font-body-md text-body-md">Test Suites</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="runs.html">
+                <span class="material-symbols-outlined" data-icon="history_toggle_off">history_toggle_off</span>
+                <span class="nav-label font-body-md text-body-md">Test Runs</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="agents.html">
+                <span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+                <span class="nav-label font-body-md text-body-md">Agents</span>
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-outline-variant pt-4">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="nav-label font-body-md text-body-md">Settings</span>
+            </a>
+            <!-- Active State: Documentation -->
+            <a class="flex items-center gap-3 px-4 py-3 text-primary border-l-2 border-primary bg-surface-container-high transition-colors duration-200" href="docs.html">
+                <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                <span class="nav-label font-body-md text-body-md">Documentation</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- TopNavBar -->
+    <header id="topnav" class="fixed top-0 right-0 h-16 bg-surface border-b border-outline-variant flex justify-end items-center px-8 ml-sidebar-width w-[calc(100%-260px)] z-40">
+        <div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer">
+            <img class="w-full h-full object-cover" alt="User Profile Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-27EJ8pu3Wygjt3F8IIqqWR_BLQ8jmIqJTmYuyLvrHNNOm46Gsg-xT_oL9HeHq0M261pi8q9TgAO0ogvTQwmbR2drUtRm9sXHM3X_o1wlh1Gs5B7-HivS-qK9wZJqryJ1fOur3hS_DxILyFH8CyfNbWcRTvzJh2teRF3vSx49Mv9xYNcC0iXYtSV3-8A66FbKwELYJeelCJzFf4Za_JAnqtaX7Ygjl9mHqCeFwQYzoh6VtejTPCoCFK5PtRGUOewG2UANJqfcwg"/>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="ml-sidebar-width pt-16 min-h-screen">
+        <div class="max-w-4xl mx-auto p-margin-desktop">
+
+            <!-- Page Header -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-primary-container/20 rounded-lg">
+                        <span class="material-symbols-outlined text-primary text-2xl" data-icon="menu_book">menu_book</span>
+                    </div>
+                    <span class="font-label-caps text-label-caps text-on-surface-variant">GUIDE</span>
+                </div>
+                <h1 class="font-display-lg text-display-lg text-on-surface mb-2">Sharing API Keys with ngrok</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">A complete guide to securely exposing your local API to the internet using ngrok, so you can share API keys and test webhooks with external services. <a href="docs.html" class="text-primary hover:underline">← Back to Documentation</a></p>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 mb-10">
+                <h3 class="font-title-sm text-title-sm text-on-surface mb-4">In this guide</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <a href="#what-is-ngrok" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">What is ngrok?</a>
+                    <a href="#step-1" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 1 — Install ngrok</a>
+                    <a href="#step-2" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 2 — Sign up & authenticate</a>
+                    <a href="#step-3" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 3 — Start a tunnel</a>
+                    <a href="#step-4" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 4 — Share your API</a>
+                    <a href="#step-5" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 5 — Secure your tunnel</a>
+                    <a href="#step-6" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Step 6 — Test with API keys</a>
+                    <a href="#troubleshooting" class="toc-link font-body-sm text-body-sm text-on-surface-variant block py-1">Troubleshooting</a>
+                </div>
+            </div>
+
+            <!-- What is ngrok -->
+            <section id="what-is-ngrok" class="mb-12">
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-4">What is ngrok?</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+                    <strong class="text-on-surface">ngrok</strong> is a tool that creates secure tunnels from a public URL to your local machine. It lets you expose a local server running on your computer to the internet — no firewall changes, no port forwarding, no static IP needed.
+                </p>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    This is especially useful when you need to share a local API with teammates, test webhooks from third-party services (Stripe, GitHub, Slack), or let someone access your development environment remotely.
+                </p>
+            </section>
+
+            <!-- Step 1: Install -->
+            <section id="step-1" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">1</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Install ngrok</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                    Choose the installation method for your operating system:
+                </p>
+
+                <!-- macOS -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3 flex items-center gap-2">
+                        <span class="text-on-surface-variant">🍎</span> macOS (Homebrew)
+                    </h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">brew install ngrok/ngrok/ngrok</span>
+                    </div>
+                </div>
+
+                <!-- Linux -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3 flex items-center gap-2">
+                        <span class="text-on-surface-variant">🐧</span> Linux (apt)
+                    </h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">curl</span> <span class="flag">-s</span> https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+  <span class="command">| sudo tee</span> /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null
+<span class="command">echo</span> <span class="flag">"deb https://ngrok-agent.s3.amazonaws.com buster main"</span> \
+  <span class="command">| sudo tee</span> /etc/apt/sources.list.d/ngrok.list
+<span class="command">sudo apt update</span>
+<span class="command">sudo apt install ngrok</span>
+                    </div>
+                </div>
+
+                <!-- Windows -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3 flex items-center gap-2">
+                        <span class="text-on-surface-variant">🪟</span> Windows (Chocolatey)
+                    </h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">choco install ngrok</span>
+                    </div>
+                </div>
+
+                <!-- Manual -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3 flex items-center gap-2">
+                        <span class="text-on-surface-variant">📦</span> Manual (any OS)
+                    </h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="comment"># 1. Download from https://ngrok.com/download</span>
+<span class="comment"># 2. Unzip the binary</span>
+<span class="command">unzip</span> /path/to/ngrok.zip
+<span class="comment"># 3. Move to a PATH location (optional)</span>
+<span class="command">sudo mv</span> ngrok /usr/local/bin/
+                    </div>
+                </div>
+
+                <div class="tip-box flex items-start gap-3">
+                    <span class="material-symbols-outlined text-secondary mt-0.5" data-icon="check_circle">check_circle</span>
+                    <div>
+                        <p class="font-body-sm text-body-sm text-secondary font-medium mb-1">Verify installation</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Run <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">ngrok version</code> in your terminal. You should see the version number printed.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Sign up & authenticate -->
+            <section id="step-2" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">2</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Sign up & authenticate</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+                    ngrok requires a free account to use. Sign up at <a href="https://dashboard.ngrok.com/signup" class="text-primary hover:underline">dashboard.ngrok.com/signup</a> and then connect your authtoken:
+                </p>
+
+                <div class="code-block mb-6">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="comment"># Get your authtoken from: https://dashboard.ngrok.com/get-started/your-authtoken</span>
+<span class="command">ngrok config add-authtoken</span> <span class="flag">YOUR_AUTH_TOKEN_HERE</span>
+                </div>
+
+                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                    This stores your token in the ngrok config file at <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">~/.ngrok2/ngrok.yml</code> (or the newer <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">~/.config/ngrok/ngrok.yml</code>). You only need to do this once.
+                </p>
+            </section>
+
+            <!-- Step 3: Start a tunnel -->
+            <section id="step-3" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">3</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Start a tunnel</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+                    First, make sure your local API server is running. For example, if your app is on port <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">3000</code>:
+                </p>
+
+                <div class="code-block mb-6">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="comment"># Start ngrok tunnel to your local port 3000</span>
+<span class="command">ngrok http</span> <span class="flag">3000</span>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+                    You'll see a terminal UI like this:
+                </p>
+
+                <div class="code-block mb-6">
+<span class="comment">ngrok</span>
+
+Session Status                online
+Account                       your-email@example.com
+Version                       3.x.x
+Region                        United States (us)
+Latency                       -
+Web Interface                 http://127.0.0.1:4040
+<span class="url">Forwarding                    https://a1b2c3d4.ngrok-free.app -> http://localhost:3000</span>
+
+Connections                   ttl     opn     rt1     rt5     p50     p90
+                              0       0       0.00    0.00    0.00    0.00
+                </div>
+
+                <div class="tip-box flex items-start gap-3 mb-6">
+                    <span class="material-symbols-outlined text-secondary mt-0.5" data-icon="check_circle">check_circle</span>
+                    <div>
+                        <p class="font-body-sm text-body-sm text-secondary font-medium mb-1">The forwarding URL is your public address</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Copy the <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">https://a1b2c3d4.ngrok-free.app</code> URL — this is what you share with others to reach your local API.</p>
+                    </div>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    You can also use the <strong class="text-on-surface">Web Interface</strong> at <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">http://127.0.0.1:4040</code> to inspect all incoming requests and responses in real time.
+                </p>
+            </section>
+
+            <!-- Step 4: Share your API -->
+            <section id="step-4" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">4</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Share your API with others</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                    Now that your tunnel is running, anyone with the ngrok URL can hit your local API. Share it like this:
+                </p>
+
+                <div class="code-block mb-6">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="comment"># Your public API base URL (share this)</span>
+<span class="url">https://a1b2c3d4.ngrok-free.app</span>
+
+<span class="comment"># Example: If your local API has an endpoint /api/health</span>
+<span class="command">curl</span> <span class="url">https://a1b2c3d4.ngrok-free.app/api/health</span>
+
+<span class="comment"># Example: POST with an API key header</span>
+<span class="command">curl</span> <span class="flag">-X POST</span> <span class="url">https://a1b2c3d4.ngrok-free.app/api/test</span> \
+  <span class="flag">-H</span> <span class="flag">"Authorization: Bearer YOUR_API_KEY"</span> \
+  <span class="flag">-H</span> <span class="flag">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="flag">'{"test": "data"}'</span>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+                    Share the URL with your teammates, clients, or third-party services. They can use it just like any public API.
+                </p>
+            </section>
+
+            <!-- Step 5: Secure your tunnel -->
+            <section id="step-5" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">5</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Secure your tunnel</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                    Since your tunnel is publicly accessible, you should add protection:
+                </p>
+
+                <!-- Basic Auth -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3">Basic Authentication</h3>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">ngrok http</span> <span class="flag">3000 --basic-auth="username:password"</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Visitors will be prompted for a username and password before they can access your API.
+                    </p>
+                </div>
+
+                <!-- IP Restriction -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3">IP Whitelisting</h3>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">ngrok http</span> <span class="flag">3000 --allow-ip-cidr="203.0.113.0/24"</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Only allow connections from specific IP addresses or CIDR ranges.
+                    </p>
+                </div>
+
+                <!-- OAuth -->
+                <div class="mb-6">
+                    <h3 class="font-title-sm text-title-sm text-on-surface mb-3">OAuth (Google / GitHub / Microsoft)</h3>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="command">ngrok http</span> <span class="flag">3000 --oauth=google</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Requires visitors to sign in with a Google (or GitHub, Microsoft) account before accessing the tunnel. Available on paid plans.
+                    </p>
+                </div>
+
+                <div class="warn-box flex items-start gap-3">
+                    <span class="material-symbols-outlined text-tertiary mt-0.5" data-icon="warning">warning</span>
+                    <div>
+                        <p class="font-body-sm text-body-sm text-tertiary font-medium mb-1">Never leave tunnels open unattended</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Always stop your ngrok tunnel (<code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">Ctrl+C</code>) when you're done. An open tunnel exposes your local machine to the internet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 6: Test with API keys -->
+            <section id="step-6" class="mb-12">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge bg-primary-container text-on-primary-container">6</div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Share & test API keys</h2>
+                </div>
+
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                    Once your tunnel is running, you can share API keys so others can authenticate against your local service:
+                </p>
+
+                <div class="code-block mb-6">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="comment"># 1. Generate an API key in your local app</span>
+<span class="command">curl</span> <span class="flag">-X POST</span> http://localhost:3000/api/keys \
+  <span class="flag">-H</span> <span class="flag">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="flag">'{"name": "test-key-for-teammate"}'</span>
+
+<span class="comment"># Response:</span>
+<span class="comment"># { "key": "sk_test_abc123..." }</span>
+
+<span class="comment"># 2. Share the ngrok URL + the API key with your teammate</span>
+<span class="comment">#    They can now make authenticated requests:</span>
+
+<span class="command">curl</span> <span class="url">https://a1b2c3d4.ngrok-free.app/api/run-test</span> \
+  <span class="flag">-H</span> <span class="flag">"Authorization: Bearer sk_test_abc123..."</span> \
+  <span class="flag">-H</span> <span class="flag">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="flag">'{"suite": "E2E-SMOKE", "env": "staging"}'</span>
+                </div>
+
+                <div class="tip-box flex items-start gap-3">
+                    <span class="material-symbols-outlined text-secondary mt-0.5" data-icon="shield">shield</span>
+                    <div>
+                        <p class="font-body-sm text-body-sm text-secondary font-medium mb-1">Best practice</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Use <strong class="text-on-surface">environment variables</strong> to store API keys — never hardcode them. Use <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">.env</code> files locally and inject them via your hosting platform in production.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section id="troubleshooting" class="mb-12">
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-6">Troubleshooting</h2>
+
+                <div class="space-y-4">
+                    <div class="bg-surface-container border border-outline-variant rounded-xl p-5">
+                        <h4 class="font-title-sm text-title-sm text-on-surface mb-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-error text-lg" data-icon="error">error</span>
+                            "Tunnel session failed: Authorization failed"
+                        </h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Make sure you've added your authtoken: <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">ngrok config add-authtoken YOUR_TOKEN</code></p>
+                    </div>
+
+                    <div class="bg-surface-container border border-outline-variant rounded-xl p-5">
+                        <h4 class="font-title-sm text-title-sm text-on-surface mb-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-error text-lg" data-icon="error">error</span>
+                            "ERR_NGROK_108: The ngrok account is limited to 1 simultaneous session"
+                        </h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Free accounts are limited to one tunnel at a time. Stop any existing tunnel (<code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">Ctrl+C</code>) before starting a new one, or upgrade to a paid plan.</p>
+                    </div>
+
+                    <div class="bg-surface-container border border-outline-variant rounded-xl p-5">
+                        <h4 class="font-title-sm text-title-sm text-on-surface mb-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-tertiary text-lg" data-icon="warning">warning</span>
+                            URL changes every time I restart ngrok
+                        </h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Free plans generate a random URL each session. For a stable subdomain, use a paid plan: <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">ngrok http 3000 --domain=myapp.ngrok-free.app</code></p>
+                    </div>
+
+                    <div class="bg-surface-container border border-outline-variant rounded-xl p-5">
+                        <h4 class="font-title-sm text-title-sm text-on-surface mb-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-tertiary text-lg" data-icon="warning">warning</span>
+                            "Connection refused" when accessing the URL
+                        </h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Your local server isn't running or is on a different port. Verify it's running: <code class="text-primary bg-surface-container-high px-1.5 py-0.5 rounded text-[13px]">curl http://localhost:3000</code></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <div class="border-t border-outline-variant pt-8 mt-8 text-center">
+                <p class="font-body-sm text-body-sm text-on-surface-variant opacity-60">
+                    For more details, visit the official <a href="https://ngrok.com/docs" class="text-primary hover:underline">ngrok documentation</a>.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        function copyCode(btn) {
+            const block = btn.closest('.code-block');
+            // Get text content, clean up the "Copy" button text
+            const clone = block.cloneNode(true);
+            const copyBtn = clone.querySelector('.copy-btn');
+            if (copyBtn) copyBtn.remove();
+            const text = clone.textContent.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.style.color = '#4edea3';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.style.color = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
