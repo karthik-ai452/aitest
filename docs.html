@@ -60,6 +60,21 @@
         .nav-label, .sidebar-title, .sidebar-subtitle, .sidebar-bottom-btn {
             transition: opacity 0.15s ease, width 0.15s ease;
         }
+        /* Light mode overrides */
+        html:not(.dark) body { background-color: #f0f4ff; color: #1a1a2e; }
+        html:not(.dark) aside, html:not(.dark) header { background-color: #ffffff !important; border-color: #d0d5dd !important; }
+        html:not(.dark) aside h1, html:not(.dark) .text-on-surface { color: #1a1a2e !important; }
+        html:not(.dark) .text-on-surface-variant { color: #6b7280 !important; }
+        html:not(.dark) .text-primary { color: #4f46e5 !important; }
+        html:not(.dark) .text-secondary { color: #10b981 !important; }
+        html:not(.dark) .text-error { color: #ef4444 !important; }
+        html:not(.dark) .text-tertiary { color: #f59e0b !important; }
+        html:not(.dark) .bg-surface-container-low, html:not(.dark) .bg-surface-container { background-color: #f8fafc !important; }
+        html:not(.dark) .bg-surface-container-high, html:not(.dark) .bg-surface-container-highest { background-color: #e8ecf2 !important; }
+        html:not(.dark) .bg-primary-container { background-color: #4f46e5 !important; color: #ffffff !important; }
+        html:not(.dark) .border-outline-variant { border-color: #d0d5dd !important; }
+        html:not(.dark) .border-primary { border-color: #4f46e5 !important; }
+        html:not(.dark) .bg-surface-variant { background-color: #e2e8f0 !important; }
     </style>
     <script id="tailwind-config">
         tailwind.config = {
@@ -186,6 +201,10 @@
             </a>
         </nav>
         <div class="mt-auto border-t border-outline-variant pt-4">
+            <button id="theme-toggle" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200 w-full text-left">
+                <span class="material-symbols-outlined" data-icon="light_mode">light_mode</span>
+                <span class="nav-label font-body-md text-body-md">Light Mode</span>
+            </button>
             <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="settings">settings</span>
                 <span class="nav-label font-body-md text-body-md">Settings</span>
@@ -200,8 +219,26 @@
 
     <!-- TopNavBar -->
     <header id="topnav" class="fixed top-0 right-0 h-16 bg-surface border-b border-outline-variant flex justify-end items-center px-8 ml-sidebar-width w-[calc(100%-260px)] z-40">
-        <div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer">
-            <img class="w-full h-full object-cover" alt="User Profile Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-27EJ8pu3Wygjt3F8IIqqWR_BLQ8jmIqJTmYuyLvrHNNOm46Gsg-xT_oL9HeHq0M261pi8q9TgAO0ogvTQwmbR2drUtRm9sXHM3X_o1wlh1Gs5B7-HivS-qK9wZJqryJ1fOur3hS_DxILyFH8CyfNbWcRTvzJh2teRF3vSx49Mv9xYNcC0iXYtSV3-8A66FbKwELYJeelCJzFf4Za_JAnqtaX7Ygjl9mHqCeFwQYzoh6VtejTPCoCFK5PtRGUOewG2UANJqfcwg"/>
+        <div class="relative">
+            <button id="profile-btn" class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <img class="w-full h-full object-cover" alt="User Profile Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-27EJ8pu3Wygjt3F8IIqqWR_BLQ8jmIqJTmYuyLvrHNNOm46Gsg-xT_oL9HeHq0M261pi8q9TgAO0ogvTQwmbR2drUtRm9sXHM3X_o1wlh1Gs5B7-HivS-qK9wZJqryJ1fOur3hS_DxILyFH8CyfNbWcRTvzJh2teRF3vSx49Mv9xYNcC0iXYtSV3-8A66FbKwELYJeelCJzFf4Za_JAnqtaX7Ygjl9mHqCeFwQYzoh6VtejTPCoCFK5PtRGUOewG2UANJqfcwg"/>
+            </button>
+            <div id="profile-dropdown" class="hidden absolute right-0 top-12 w-56 bg-surface-container border border-outline-variant rounded-xl shadow-2xl overflow-hidden z-50">
+                <div class="px-4 py-3 border-b border-outline-variant">
+                    <p class="font-body-md text-body-md text-on-surface font-medium">Karthik Reddy</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">karthik@example.com</p>
+                </div>
+                <div class="py-1">
+                    <button id="change-pwd-btn" class="flex items-center gap-3 w-full px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-high transition-colors text-left">
+                        <span class="material-symbols-outlined text-lg" data-icon="lock">lock</span>
+                        <span class="font-body-sm text-body-sm">Change Password</span>
+                    </button>
+                    <button id="logout-btn" class="flex items-center gap-3 w-full px-4 py-2.5 text-error hover:bg-surface-container-high transition-colors text-left">
+                        <span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+                        <span class="font-body-sm text-body-sm">Log Out</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -319,5 +356,31 @@
     </main>
 
     <script src="sidebar.js"></script>
+
+    <!-- Change Password Modal -->
+    <div id="change-pwd-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]">
+        <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="font-headline-md text-headline-md text-on-surface mb-1">Change Password</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-6">Enter your current password and choose a new one.</p>
+            <form id="change-pwd-form" class="space-y-4">
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CURRENT PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Enter current password"/>
+                </div>
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">NEW PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Enter new password"/>
+                </div>
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CONFIRM NEW PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Confirm new password"/>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-primary-container text-on-primary-container font-label-caps text-label-caps py-2.5 rounded-lg hover:opacity-90 transition-opacity">Update Password</button>
+                    <button type="button" id="change-pwd-cancel" class="flex-1 border border-outline-variant text-on-surface-variant font-label-caps text-label-caps py-2.5 rounded-lg hover:bg-surface-container-high transition-colors">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
