@@ -16,9 +16,10 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ─── No underline on any link ────────── */
+/* ─── No underline + inherit color on all links ─── */
 a {
     text-decoration: none !important;
+    color: inherit;
 }
 a:hover, a:active, a:focus, a:visited {
     text-decoration: none !important;
@@ -776,3 +777,13 @@ html:not(.dark) .guest-form-group input, html:not(.dark) .guest-form-group texta
 html:not(.dark) .guest-form-group input::placeholder, html:not(.dark) .guest-form-group textarea::placeholder { color: #9ca3af; }
 html:not(.dark) .guest-form-group input:focus, html:not(.dark) .guest-form-group textarea:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 html:not(.dark) .guest-logo { filter: none; }
+
+/* ─── Agents page — test case rendering ─── */
+.test-case { margin-bottom: 12px; }
+.test-case-header { font-weight: 600; font-size: 14px; padding: 8px 0 4px; display: flex; align-items: center; gap: 6px; }
+.test-case-header .status { font-size: 12px; }
+.step { font-size: 13px; padding: 3px 0 3px 20px; display: flex; align-items: center; gap: 6px; color: #4a5568; }
+.step .status { font-size: 11px; }
+.step.current-step { font-weight: 600; background: rgba(79, 70, 229, 0.05); border-radius: 4px; padding: 4px 8px 4px 20px; }
+.action-message { transition: all 0.3s ease; }
+.action-message.showing { opacity: 1 !important; transform: translateX(-50%) translateY(0) !important; pointer-events: auto !important; }
