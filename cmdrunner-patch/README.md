@@ -1,52 +1,63 @@
-# CmdRunner Frontend Patch
+# CmdRunner Frontend Patch v5
 
-This branch contains the corrected frontend files for the CmdRunner project.
-Copy these into your Codespace to replace the default frontend.
+## What's Fixed (v5)
 
-## What's Changed (v4 — Layout Fix)
+### 1. Test Suite Creation — Self-contained JS
+`test_suite_new.html` and `test_suite_edit.html` now have ALL JavaScript inline in a self-contained IIFE. No dependency on `public.js` for test case/step management. This means:
+- ✅ Add test case works
+- ✅ Add step works
+- ✅ Delete test case / step works
+- ✅ Toggle Expectation & Notes works
+- ✅ Form submission via JSON works
+- ✅ File upload works
+- Falls back to `alert()`/`confirm()` if `show_alert()`/`show_prompt()` aren't available
 
-- **Fixed sidebar collapse** — Now uses `body.sidebar-collapsed` class instead of broken CSS sibling selectors. Sidebar minimize button works properly.
-- **Fixed page-wrapper double-card** — Removed the white card wrapper that was creating a "card inside card" effect on all pages.
-- **Fixed table styles** — Removed global border/margin that conflicted with Tailwind card styling.
-- **Fixed link colors** — Removed `color: inherit` from global `a` tag so inline `style="color: ..."` works on Run/Edit/Delete links.
-- **Fixed test_runs.html** — Uses `test_runs` variable (matching backend).
-- **Fixed test_run_view.html** — Back link points to `/test_runs`.
-- **No dark theme** — Light/white only across all pages.
+### 2. Test Runs — No DB Change Needed
+`test_runs.html` now uses `{{ run.suite_name or run.test_suite_name or '' }}` so it works with both column names.
 
-## Files to Copy
-
-### Templates
+**BUT**: The `test_run_repository.py` file queries `test_suite_name` which doesn't exist. Fix with:
 ```bash
-# Copy page templates (skip login/register/base_guest — those stay original)
+cd /workspaces/cmdrunner
+sed -i 's/test_suite_name/suite_name/g' cmdrunner_web/test_run_repository.py
+```
+
+### 3. Sidebar Collapse Fixed
+Uses `body.sidebar-collapsed` class toggled by JS.
+
+### 4. Layout Fixed
+- No more double-card (page-wrapper stripped)
+- No more table border conflicts
+- Link colors work (no more `color: inherit` override)
+
+---
+
+## Quick Copy Commands
+
+```bash
+cd /workspaces/cmdrunner
+
+# Get the patch
+git clone --branch cmdrunner-frontend-patch --depth 1 git@github.com:karthik-ai452/aitest.git /tmp/patch
+
+# Copy templates (DO NOT replace login.html, register.html, base_guest.html)
+cp /tmp/patch/cmdrunner-patch/templates/base.html cmdrunner_web/templates/base.html
 for f in index.html test_suites.html test_suite_new.html test_suite_edit.html test_runs.html test_run_view.html agents.html; do
-  cp templates/pages/$f ../cmdrunner_web/templates/pages/$f
+  cp /tmp/patch/cmdrunner-patch/templates/pages/$f cmdrunner_web/templates/pages/$f
 done
 
-# Copy base.html (sidebar + topnav + layout)
-cp templates/base.html ../cmdrunner_web/templates/base.html
+# Copy static files
+cp /tmp/patch/cmdrunner-patch/static/css/style.css cmdrunner_web/static/css/style.css
+cp /tmp/patch/cmdrunner-patch/static/js/sidebar.js cmdrunner_web/static/js/sidebar.js
+cp /tmp/patch/cmdrunner-patch/static/public.js cmdrunner_web/static/public.js
+cp /tmp/patch/cmdrunner-patch/static/index.js cmdrunner_web/static/index.js
+
+# Clean up
+rm -rf /tmp/patch
 ```
 
-### Static Files
-```bash
-# Copy CSS, JS
-cp static/css/style.css ../cmdrunner_web/static/css/style.css
-cp static/js/sidebar.js ../cmdrunner_web/static/js/sidebar.js
-cp static/js/tailwind-config.js ../cmdrunner_web/static/js/tailwind-config.js
-cp static/public.js ../cmdrunner_web/static/public.js
-cp static/index.js ../cmdrunner_web/static/index.js
-```
+## Routes to Add (if not already done)
 
-### Don't Copy (keep original)
-- `templates/login.html`
-- `templates/register.html`
-- `templates/base_guest.html`
-- `static/js/lightbox2/` (already exists)
-- `static/favicon/` (already exists)
-- `static/cmdrunner_logo*.png` (already exists)
-
-## Routes You Need to Add
-
-Add these to `cmdrunner_web/__init__.py` **before** the `@app.errorhandler(404)` line:
+Add before `@app.errorhandler(404)` in `cmdrunner_web/__init__.py`:
 
 ```python
 @app.route('/agents')
@@ -62,18 +73,17 @@ async def docs_ngrok():
     return await render_template('docs_ngrok.html')
 ```
 
-## DB Fix
+## Repository Fix (for test_runs 500 error)
 
-The test_runs table has `suite_name` column but the repository queries `test_suite_name`:
 ```bash
-sqlite3 /workspaces/cmdrunner/database/database.db "ALTER TABLE test_runs RENAME COLUMN suite_name TO test_suite_name;"
+sed -i 's/test_suite_name/suite_name/g' cmdrunner_web/test_run_repository.py
 ```
 
-## After Copying
+## Restart
 
 ```bash
-cd /workspaces/cmdrunner
-# Restart the app
 pkill -f "python.*__main__" || true
 python -m cmdrunner_web
 ```
+
+Then **hard refresh** the browser (Ctrl+Shift+R) to clear cached CSS/JS.

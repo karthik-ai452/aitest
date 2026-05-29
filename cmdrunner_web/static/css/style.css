@@ -16,6 +16,14 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* ─── No underline on any link ── */
+a {
+    text-decoration: none !important;
+}
+a:hover, a:active, a:focus {
+    text-decoration: none !important;
+}
+
 /* ─── Material Symbols ────────────────────────────────────── */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -56,12 +64,9 @@ h1 {
 
 /* ─── Page Wrapper ────────────────────────────────────────── */
 .page-wrapper {
-    max-width: calc(100% - 70px);
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
 }
 
 /* ─── Menu (old base.html) ────────────────────────────────── */
@@ -194,8 +199,8 @@ button.red:hover, .button.red:hover { background-color: #882121; }
 }
 
 /* ─── Links ───────────────────────────────────────────────── */
-a:link, a:visited { color: #007bff; text-decoration: none; }
-a:hover { text-decoration: underline; }
+a:link, a:visited { text-decoration: none; }
+a:hover { text-decoration: none; }
 
 a:link.green, a:visited.green { color: #28a745; }
 a:link.green:hover, a:visited.green:hover { color: #218838; }
@@ -422,22 +427,15 @@ a.badge:hover { text-decoration: none; }
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    border: 1px solid #ddd;
 }
-
-tr { border: 1px solid #ddd; border-collapse: collapse; }
 
 th, td {
     padding: 12px;
     text-align: left;
-    border: 1px solid #ddd;
-    border-collapse: collapse;
     vertical-align: top;
 }
 
-th { background-color: #f2f2f2; font-weight: bold; }
-td { background-color: #fff; }
+th { background-color: #f7fafc; font-weight: bold; }
 
 /* ─── Flash Messages ──────────────────────────────────────── */
 .flash-message {
@@ -624,17 +622,18 @@ input[type="date"] { max-width: 170px; }
 
 #sidebar.sidebar-collapsed nav a .material-symbols-outlined { margin: 0; }
 
+/* ─── Sidebar collapse via body class (JS toggles body.sidebar-collapsed) ─── */
 #topnav, #main-content {
     transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#sidebar.sidebar-collapsed ~ #topnav,
-#sidebar.sidebar-collapsed ~ #main-content { margin-left: 64px !important; }
+body.sidebar-collapsed #topnav {
+    margin-left: 64px !important;
+    width: calc(100% - 64px) !important;
+}
 
-#sidebar.sidebar-collapsed ~ #topnav { width: calc(100% - 64px) !important; }
-
-.nav-label, .sidebar-title, .sidebar-subtitle, .sidebar-bottom-btn {
-    transition: opacity 0.15s ease, width 0.15s ease;
+body.sidebar-collapsed #main-content {
+    margin-left: 64px !important;
 }
 
 /* ─── Bento Grid ──────────────────────────────────────────── */

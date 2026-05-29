@@ -1,24 +1,20 @@
-/* CmdRunner — Sidebar & Theme Toggle */
+/* CmdRunner — Sidebar Toggle */
 (function () {
     'use strict';
 
     // ─── Sidebar Toggle ────────────────────────────────────────
     var sidebar = document.getElementById('sidebar');
     var toggleBtn = document.getElementById('sidebar-toggle');
-    var topnav = document.getElementById('topnav');
-    var mainContent = document.getElementById('main-content');
 
     function collapseSidebar() {
         if (sidebar) sidebar.classList.add('sidebar-collapsed');
-        if (topnav) { topnav.classList.add('ml-0'); topnav.classList.remove('ml-sidebar-width'); topnav.style.width = '100%'; }
-        if (mainContent) { mainContent.classList.add('ml-0'); mainContent.classList.remove('ml-sidebar-width'); }
+        document.body.classList.add('sidebar-collapsed');
         try { localStorage.setItem('cmdrunner-sidebar', 'collapsed'); } catch (e) {}
     }
 
     function expandSidebar() {
         if (sidebar) sidebar.classList.remove('sidebar-collapsed');
-        if (topnav) { topnav.classList.remove('ml-0'); topnav.classList.add('ml-sidebar-width'); topnav.style.width = ''; }
-        if (mainContent) { mainContent.classList.remove('ml-0'); mainContent.classList.add('ml-sidebar-width'); }
+        document.body.classList.remove('sidebar-collapsed');
         try { localStorage.setItem('cmdrunner-sidebar', 'expanded'); } catch (e) {}
     }
 
