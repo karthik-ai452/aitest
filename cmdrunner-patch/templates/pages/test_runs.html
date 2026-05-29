@@ -21,16 +21,19 @@
             <tr class="border-b border-[#e2e8f0]">
                 <td class="py-3 px-4 text-[#4a5568]">{{ run.test_suite_name }}</td>
                 <td class="py-3 px-4">
-                    {% if run.status == 'not_started' %}
+                    {% set status = run.status|string|lower %}
+                    {% if status == 'not_started' %}
                     <span class="text-[#6b7280]">Not started</span>
-                    {% elif run.status == 'running' %}
+                    {% elif status == 'running' or status == 'in_progress' %}
                     <span class="text-[#3182ce]">Running</span>
-                    {% elif run.status == 'passed' %}
+                    {% elif status == 'passed' or status == 'success' %}
                     <span class="text-[#38a169]">Passed</span>
-                    {% elif run.status == 'failed' %}
+                    {% elif status == 'failed' or status == 'failure' %}
                     <span class="text-[#e53e3e]">Failure</span>
-                    {% elif run.status == 'timeout' %}
+                    {% elif status == 'timeout' %}
                     <span class="text-[#2d3748]">Timeout</span>
+                    {% elif status == 'stopped' %}
+                    <span class="text-[#2d3748]">Stopped</span>
                     {% else %}
                     <span class="text-[#2d3748]">{{ run.status | capitalize }}</span>
                     {% endif %}

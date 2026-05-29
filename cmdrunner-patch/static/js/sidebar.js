@@ -1,4 +1,4 @@
-/* CmdRunner — Sidebar & Theme Toggle */
+/* CmdRunner — Sidebar */
 (function () {
     'use strict';
 
