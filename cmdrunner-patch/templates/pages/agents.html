@@ -6,62 +6,76 @@
 
 {% block content %}
 <!-- Page Header -->
-<div class="mb-8">
+<div class="mb-6">
     <h2 class="font-display-lg text-display-lg text-on-surface">Agents</h2>
     <p class="font-body-md text-body-md text-on-surface-variant mt-1">Upload test suites and run automated browser tests powered by AI agents.</p>
 </div>
 
 <!-- Action Bar -->
-<div class="flex flex-wrap items-center gap-3 mb-6">
-    <div class="flex items-center gap-3">
-        <button id="btn-upload" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#2196F3] text-white hover:opacity-90 transition-opacity">
-            <span class="material-symbols-outlined text-lg">upload_file</span>
-            Upload test suite
-        </button>
-        <button id="btn-run" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#4CAF50] text-white hover:opacity-90 transition-opacity">
-            <span class="material-symbols-outlined text-lg">play_arrow</span>
-            Run
-        </button>
-    </div>
+<div class="flex items-center gap-3 mb-4">
+    <button id="upload-test-suite" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm bg-[#1a63b8] text-white hover:bg-[#2f73c2] transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-lg">upload_file</span>
+        Upload test suite
+    </button>
+    <button id="run-test-suite" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm bg-[#28a745] text-white hover:bg-[#218838] transition-colors cursor-pointer disabled">
+        <span class="material-symbols-outlined text-lg">play_arrow</span>
+        Run
+    </button>
     <div class="flex-1"></div>
-    <button id="btn-stop" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#9E9E9E] text-white hover:opacity-90 transition-opacity">
+    <button id="stop" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white hover:opacity-90 transition-colors cursor-pointer disabled" style="background-color:#ff4d4d">
         <span class="material-symbols-outlined text-lg">stop</span>
         Stop
     </button>
 </div>
 
+<!-- Action Message -->
+<div class="action-message"></div>
+
 <!-- Two-Panel Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6" style="min-height: 500px;">
+<div class="flex gap-5" style="min-height: calc(100vh - 240px);">
     <!-- Left Panel: Test Cases -->
-    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
-        <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-4">description</span>
-        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">No test cases loaded</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
-            To start, upload a test case file (.xls, .pdf or .txt).<br>
-            Once uploaded, the test cases will be displayed here.
-        </p>
+    <div id="test-case-container" class="w-[35%] flex-shrink-0 border border-[#ccc] rounded-xl overflow-auto relative" style="background:#fafafa;">
+        <!-- Start Note (shown initially) -->
+        <div class="note start-note absolute inset-0 flex items-center justify-center text-center" style="display:flex;">
+            <div>
+                <span class="material-symbols-outlined text-[#999] text-5xl block mb-3">description</span>
+                <p class="text-[#666]">Upload a test case file (.xls, .pdf or .txt) to get started.</p>
+            </div>
+        </div>
+        <!-- Loading Spinner (hidden) -->
+        <div class="loading absolute inset-0 flex items-center justify-center" style="display:none;">
+            <div class="spinner"></div>
+        </div>
+        <!-- Test Cases (hidden initially) -->
+        <div class="test-cases p-4" style="display:none;"></div>
     </div>
 
-    <!-- Right Panel: Browser Display -->
-    <div class="bg-[#1a1a1a] border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
-        <span class="material-symbols-outlined text-white/50 text-5xl mb-4">language</span>
-        <p class="font-body-lg text-body-lg text-white/70">
-            Browser will be displayed here.
-        </p>
+    <!-- Right Panel: Browser View -->
+    <div id="browser-view" class="flex-1 rounded-xl overflow-hidden relative" style="background:#1a1a1a; min-height: 400px;">
+        <!-- Browser Placeholder (shown initially) -->
+        <div class="browser-placeholder absolute inset-0 flex flex-col items-center justify-center text-center" style="display:flex;">
+            <span class="material-symbols-outlined text-white/40 text-5xl block mb-3">language</span>
+            <p class="text-white/50 text-lg">Browser will be displayed here.</p>
+        </div>
+        <!-- Starting Browser (hidden) -->
+        <div class="starting-browser absolute inset-0 flex flex-col items-center justify-center text-center" style="display:none; background:#1a1a1a;">
+            <div class="spinner white" style="margin:0 auto 15px auto;"></div>
+            <span class="starting-browser-text text-white/70">Starting browser...</span>
+        </div>
+        <!-- noVNC Viewer iframe -->
+        <iframe id="viewer" src="about:blank" allow="autoplay; fullscreen" class="absolute inset-0 w-full h-full border-0"></iframe>
+        <!-- Disable interaction overlay -->
+        <div class="disable-interaction" style="display:none;"></div>
     </div>
 </div>
 
-<!-- Hidden file input for upload -->
-<input type="file" id="file-upload-input" class="hidden" accept=".xls,.xlsx,.pdf,.txt" />
+<!-- Hidden file input -->
+<input type="file" id="test-suite-file" class="hidden" accept=".xls,.xlsx,.pdf,.txt" />
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='public.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-<script>
-// Wire up the upload button to trigger the hidden file input
-document.getElementById('btn-upload').addEventListener('click', function() {
-    document.getElementById('file-upload-input').click();
-});
-</script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lightbox2/js/lightbox-plus-jquery.min.js') }}"></script>
 {% endblock %}
