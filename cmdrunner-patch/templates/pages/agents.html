@@ -5,65 +5,63 @@
 {% block title %}Agents — CmdRunner{% endblock %}
 
 {% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h2 class="font-display-lg text-display-lg text-on-surface">Agents</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Upload test suites and run automated browser tests powered by AI agents.</p>
+</div>
+
 <!-- Action Bar -->
-<div class="action-bar">
-    <div class="upload">
-        <button id="upload-test-suite" class="blue">
-            <span class="material-symbols-outlined" style="vertical-align:middle;font-size:18px;margin-right:4px">upload_file</span>
+<div class="flex flex-wrap items-center gap-3 mb-6">
+    <div class="flex items-center gap-3">
+        <button id="btn-upload" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#2196F3] text-white hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined text-lg">upload_file</span>
             Upload test suite
         </button>
-        <button id="run-test-suite" class="green disabled">
-            <span class="material-symbols-outlined" style="vertical-align:middle;font-size:18px;margin-right:4px">play_arrow</span>
+        <button id="btn-run" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#4CAF50] text-white hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined text-lg">play_arrow</span>
             Run
         </button>
     </div>
-    <button id="stop" class="disabled" style="background-color:#ff4d4d">
-        <span class="material-symbols-outlined" style="vertical-align:middle;font-size:18px;margin-right:4px">stop</span>
+    <div class="flex-1"></div>
+    <button id="btn-stop" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#9E9E9E] text-white hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-lg">stop</span>
         Stop
     </button>
 </div>
 
-<!-- Action Message -->
-<div class="action-message"></div>
-
 <!-- Two-Panel Layout -->
-<div class="test-wrapper">
+<div class="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6" style="min-height: 500px;">
     <!-- Left Panel: Test Cases -->
-    <div id="test-case-container">
-        <div class="note start-note">
-            <div>
-                <span class="material-symbols-outlined" style="font-size:48px;color:#999;display:block;margin-bottom:10px">description</span>
-                Upload a test case file (.xls, .pdf or .txt) to get started.
-            </div>
-        </div>
-        <div class="loading">
-            <div class="spinner" style="margin:0 auto"></div>
-        </div>
-        <div class="test-cases"></div>
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+        <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-4">description</span>
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">No test cases loaded</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+            To start, upload a test case file (.xls, .pdf or .txt).<br>
+            Once uploaded, the test cases will be displayed here.
+        </p>
     </div>
 
-    <!-- Right Panel: Browser View -->
-    <div id="browser-view">
-        <div class="browser-placeholder">
-            <span class="material-symbols-outlined" style="font-size:48px;color:#666;display:block;margin-bottom:10px">language</span>
+    <!-- Right Panel: Browser Display -->
+    <div class="bg-[#1a1a1a] border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+        <span class="material-symbols-outlined text-white/50 text-5xl mb-4">language</span>
+        <p class="font-body-lg text-body-lg text-white/70">
             Browser will be displayed here.
-        </div>
-        <div class="starting-browser">
-            <div class="spinner white" style="margin:0 auto 15px auto"></div>
-            <span class="starting-browser-text">Starting browser...</span>
-        </div>
-        <iframe id="viewer" src="about:blank" allow="autoplay; fullscreen"></iframe>
-        <div class="disable-interaction" style="display:none"></div>
+        </p>
     </div>
 </div>
 
-<!-- Hidden file input -->
-<input type="file" id="test-suite-file" accept=".xls,.xlsx,.pdf,.txt" />
+<!-- Hidden file input for upload -->
+<input type="file" id="file-upload-input" class="hidden" accept=".xls,.xlsx,.pdf,.txt" />
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='public.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-<script src="{{ url_for('static', filename='index.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lightbox2/js/lightbox-plus-jquery.min.js') }}"></script>
+<script>
+// Wire up the upload button to trigger the hidden file input
+document.getElementById('btn-upload').addEventListener('click', function() {
+    document.getElementById('file-upload-input').click();
+});
+</script>
 {% endblock %}

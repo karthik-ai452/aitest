@@ -2,35 +2,19 @@
 (function () {
     'use strict';
 
-    var SIDEBAR_EXPANDED = 260;
-    var SIDEBAR_COLLAPSED = 64;
-
+    // ─── Sidebar Toggle ────────────────────────────────────────
     var sidebar = document.getElementById('sidebar');
     var toggleBtn = document.getElementById('sidebar-toggle');
-    var topnav = document.getElementById('topnav');
-    var mainContent = document.getElementById('main-content');
 
     function collapseSidebar() {
         if (sidebar) sidebar.classList.add('sidebar-collapsed');
-        if (topnav) {
-            topnav.style.marginLeft = SIDEBAR_COLLAPSED + 'px';
-            topnav.style.width = 'calc(100% - ' + SIDEBAR_COLLAPSED + 'px)';
-        }
-        if (mainContent) {
-            mainContent.style.marginLeft = SIDEBAR_COLLAPSED + 'px';
-        }
+        document.body.classList.add('sidebar-collapsed');
         try { localStorage.setItem('cmdrunner-sidebar', 'collapsed'); } catch (e) {}
     }
 
     function expandSidebar() {
         if (sidebar) sidebar.classList.remove('sidebar-collapsed');
-        if (topnav) {
-            topnav.style.marginLeft = SIDEBAR_EXPANDED + 'px';
-            topnav.style.width = 'calc(100% - ' + SIDEBAR_EXPANDED + 'px)';
-        }
-        if (mainContent) {
-            mainContent.style.marginLeft = SIDEBAR_EXPANDED + 'px';
-        }
+        document.body.classList.remove('sidebar-collapsed');
         try { localStorage.setItem('cmdrunner-sidebar', 'expanded'); } catch (e) {}
     }
 

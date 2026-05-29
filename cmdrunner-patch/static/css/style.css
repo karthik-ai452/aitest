@@ -69,31 +69,6 @@ h1 {
     padding: 0;
 }
 
-/* ─── Topnav & Main Canvas (CSS-driven, not Tailwind) ───── */
-.topnav-bar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 64px;
-    background: var(--md-sys-color-surface, #fff);
-    border-bottom: 1px solid var(--md-sys-color-outline-variant, #ddd);
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 32px;
-    margin-left: 260px;
-    width: calc(100% - 260px);
-    z-index: 40;
-    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.main-canvas {
-    margin-left: 260px;
-    padding-top: 64px;
-    min-height: 100vh;
-    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* ─── Menu (old base.html) ────────────────────────────────── */
 .menu {
     display: flex;
@@ -646,6 +621,20 @@ input[type="date"] { max-width: 170px; }
 }
 
 #sidebar.sidebar-collapsed nav a .material-symbols-outlined { margin: 0; }
+
+/* ─── Sidebar collapse via body class (JS toggles body.sidebar-collapsed) ─── */
+#topnav, #main-content {
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-collapsed #topnav {
+    margin-left: 64px !important;
+    width: calc(100% - 64px) !important;
+}
+
+body.sidebar-collapsed #main-content {
+    margin-left: 64px !important;
+}
 
 /* ─── Bento Grid ──────────────────────────────────────────── */
 .bento-grid {
