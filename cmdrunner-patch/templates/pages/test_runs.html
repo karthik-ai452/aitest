@@ -25,9 +25,9 @@
                     <span class="text-[#6b7280]">Not started</span>
                     {% elif run.status == 'running' %}
                     <span class="text-[#3182ce]">Running</span>
-                    {% elif run.status == 'passed' %}
+                    {% elif run.status == 'passed' or run.status == 'success' %}
                     <span class="text-[#38a169]">Passed</span>
-                    {% elif run.status == 'failed' %}
+                    {% elif run.status == 'failed' or run.status == 'failure' %}
                     <span class="text-[#e53e3e]">Failure</span>
                     {% elif run.status == 'timeout' %}
                     <span class="text-[#2d3748]">Timeout</span>
@@ -35,7 +35,7 @@
                     <span class="text-[#2d3748]">{{ run.status | capitalize }}</span>
                     {% endif %}
                 </td>
-                <td class="py-3 px-4 text-[#4a5568] localdatetime">{{ run.created_at }}</td>
+                <td class="py-3 px-4 text-[#4a5568] localdatetime">{{ run.timestamp or run.created_at }}</td>
                 <td class="py-3 px-4">
                     <a href="/test_runs/{{ run.id }}" class="hover:underline font-medium" style="color: #3182ce">View</a>
                 </td>
