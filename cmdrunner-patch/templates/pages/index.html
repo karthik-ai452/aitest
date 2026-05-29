@@ -9,6 +9,31 @@
     <p class="font-body-md text-body-md text-on-surface-variant mt-1">Here's your testing overview for today.</p>
 </div>
 
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-primary text-2xl">collections_bookmark</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">TEST SUITES</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface" data-counter="{{ stats.total_suites if stats else 0 }}">{{ stats.total_suites if stats else 0 }}</p>
+    </div>
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-secondary text-2xl">history_toggle_off</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL RUNS</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface" data-counter="{{ stats.total_runs if stats else 0 }}">{{ stats.total_runs if stats else 0 }}</p>
+    </div>
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-2xl" style="color:#38a169">check_circle</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">PASS RATE</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface">{{ stats.pass_rate if stats else 0 }}%</p>
+    </div>
+</div>
+
 <!-- Quick Actions -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <a href="/test_suites" class="group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40 transition-all">
