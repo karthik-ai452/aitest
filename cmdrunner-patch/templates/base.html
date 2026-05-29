@@ -64,7 +64,7 @@
     </aside>
 
     <!-- ═══ Top Navigation Bar (inlined from partials/topnav.html) ═══ -->
-    <header id="topnav" class="fixed top-0 right-0 h-16 bg-surface border-b border-outline-variant flex justify-end items-center px-8 ml-sidebar-width w-[calc(100%-260px)] z-40">
+    <header id="topnav" class="fixed top-0 right-0 h-16 bg-surface border-b border-outline-variant flex justify-end items-center px-8 z-40" style="margin-left:260px;width:calc(100% - 260px)">
         <div class="relative">
             <button id="profile-btn" class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30">
                 <div class="w-full h-full flex items-center justify-center bg-primary-container text-on-primary-container font-body-sm text-body-sm">K</div>
@@ -106,7 +106,7 @@
     {% endwith %}
 
     <!-- Main Content Canvas -->
-    <main id="main-content" class="ml-sidebar-width pt-16 min-h-screen">
+    <main id="main-content" class="pt-16 min-h-screen" style="margin-left:260px">
         <div class="p-margin-desktop max-w-container-max mx-auto page-wrapper">
             {% block content %}{% endblock %}
         </div>
