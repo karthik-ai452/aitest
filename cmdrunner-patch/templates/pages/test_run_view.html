@@ -116,7 +116,7 @@
                                 <span class="font-body-sm text-body-sm text-on-surface">{{ action.message }}</span>
                                 {% if action.screenshot %}
                                 <span class="text-xs">
-                                    [<a target="_blank" data-lightbox="gallery" data-title="{{ action.message }}" href="/test_runs/{{ test_run_id }}/screenshot/{{ action.id }}" class="text-primary ">View screenshot</a>]
+                                    [<a target="_blank" data-lightbox="gallery" data-title="{{ action.message }}" href="/test_runs/{{ test_run_id }}/screenshot/{{ action.id }}" class="text-primary hover:underline">View screenshot</a>]
                                 </span>
                                 {% endif %}
                             </div>

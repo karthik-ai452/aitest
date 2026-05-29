@@ -23,7 +23,7 @@
         <!-- Created At -->
         <div class="mb-6">
             <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CREATED AT</label>
-            <input type="text" id="timestamp" value="{{ test_suite.created_at or test_suite.timestamp or '' }}" class="localdatetime w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface-variant focus:outline-none" disabled>
+            <input type="text" id="timestamp" value="{{ test_suite.timestamp or '' }}" class="localdatetime w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface-variant focus:outline-none" disabled>
         </div>
 
         <!-- Test Cases -->
@@ -54,6 +54,7 @@
                     <div class="mb-2">
                         <label class="font-body-sm text-body-sm text-on-surface-variant block mb-2">Steps</label>
                         <div class="steps space-y-3">
+                            {% set outer = loop %}
                             {% for step in test_case.steps %}
                             <fieldset class="step-fieldset bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
                                 <legend class="font-label-caps text-label-caps text-on-surface-variant px-2">Step <span class="step-number text-primary">#{{ loop.index }}</span></legend>
@@ -107,13 +108,15 @@
                 <div class="mb-4">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Name</label>
                     <div class="flex gap-2">
-                        <input type="text" class="test-case-name flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Test login functionality">
+                        <input type="text" class="test-case-name flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Test login functionality">
                         <button type="button" class="js-remove-testcase px-3 py-2 rounded-lg border border-error/30 text-error font-label-caps text-label-caps hover:bg-error/10 transition-colors">Delete</button>
                     </div>
                 </div>
                 <div class="mb-4">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">URL</label>
-                    <input type="text" class="test-case-url w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. https://www.example.com">
+                    <input type="text" class="test-case-url w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                        placeholder="e.g. https://www.example.com">
                 </div>
                 <div class="mb-2">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-2">Steps</label>
@@ -130,18 +133,21 @@
                 <div class="mb-3">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Step name</label>
                     <div class="flex gap-2">
-                        <input type="text" class="step-name flex-1 bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Click on the login button">
+                        <input type="text" class="step-name flex-1 bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Click on the login button">
                         <button type="button" class="js-remove-step px-2 py-1.5 rounded-lg border border-error/30 text-error font-label-caps text-label-caps text-xs hover:bg-error/10 transition-colors">Delete</button>
                     </div>
                 </div>
                 <div class="expectation-and-notes">
                     <div class="mb-2">
                         <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Expectation (optional)</label>
-                        <input type="text" class="step-expectation w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. The login page should appear">
+                        <input type="text" class="step-expectation w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. The login page should appear">
                     </div>
                     <div class="mb-2">
                         <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Notes (optional)</label>
-                        <input type="text" class="step-notes w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Use the customer login button, not the reseller login button">
+                        <input type="text" class="step-notes w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Use the customer login button, not the reseller login button">
                     </div>
                 </div>
                 <a href="#" class="js-add-expectation-and-notes font-body-sm text-body-sm text-primary hover:underline">+ Add Expectation & Notes</a>

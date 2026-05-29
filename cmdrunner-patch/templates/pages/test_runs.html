@@ -37,10 +37,10 @@
                 </td>
                 <td class="py-3 px-4 text-[#4a5568] localdatetime">{{ run.created_at }}</td>
                 <td class="py-3 px-4">
-                    <a href="/test_runs/{{ run.id }}" class=" font-medium" style="color: #3182ce">View</a>
+                    <a href="/test_runs/{{ run.id }}" class="hover:underline font-medium" style="color: #3182ce">View</a>
                 </td>
                 <td class="py-3 px-4">
-                    <a href="#" class=" font-medium" style="color: #e53e3e"
+                    <a href="#" class="hover:underline font-medium" style="color: #e53e3e"
                        onclick="show_prompt('Delete test run', 'Are you sure you want to delete this test run?', {'Delete': () => { post_to_page('/test_runs/{{ run.id }}/delete') }, 'Cancel': () => { return; }}, {class: 'danger'}); return false;">Delete</a>
                 </td>
             </tr>

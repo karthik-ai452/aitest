@@ -62,6 +62,7 @@
         <div class="mb-6">
             <label class="font-label-caps text-label-caps text-on-surface-variant block mb-3">TEST CASES</label>
             <div id="test-cases-list" class="space-y-4"></div>
+
             <button type="button" class="js-add-testcase mt-3 w-full py-2.5 rounded-lg border-2 border-dashed border-outline-variant text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high transition-colors">+ Add test case</button>
         </div>
 
@@ -77,13 +78,15 @@
                 <div class="mb-4">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Name</label>
                     <div class="flex gap-2">
-                        <input type="text" class="test-case-name flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Test login functionality">
+                        <input type="text" class="test-case-name flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Test login functionality">
                         <button type="button" class="js-remove-testcase px-3 py-2 rounded-lg border border-error/30 text-error font-label-caps text-label-caps hover:bg-error/10 transition-colors">Delete</button>
                     </div>
                 </div>
                 <div class="mb-4">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">URL</label>
-                    <input type="text" class="test-case-url w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. https://www.example.com">
+                    <input type="text" class="test-case-url w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                        placeholder="e.g. https://www.example.com">
                 </div>
                 <div class="mb-2">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-2">Steps</label>
@@ -100,18 +103,21 @@
                 <div class="mb-3">
                     <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Step name</label>
                     <div class="flex gap-2">
-                        <input type="text" class="step-name flex-1 bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Click on the login button">
+                        <input type="text" class="step-name flex-1 bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Click on the login button">
                         <button type="button" class="js-remove-step px-2 py-1.5 rounded-lg border border-error/30 text-error font-label-caps text-label-caps text-xs hover:bg-error/10 transition-colors">Delete</button>
                     </div>
                 </div>
                 <div class="expectation-and-notes">
                     <div class="mb-2">
                         <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Expectation (optional)</label>
-                        <input type="text" class="step-expectation w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. The login page should appear">
+                        <input type="text" class="step-expectation w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. The login page should appear">
                     </div>
                     <div class="mb-2">
                         <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Notes (optional)</label>
-                        <input type="text" class="step-notes w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="e.g. Use the customer login button, not the reseller login button">
+                        <input type="text" class="step-notes w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Use the customer login button, not the reseller login button">
                     </div>
                 </div>
                 <a href="#" class="js-add-expectation-and-notes font-body-sm text-body-sm text-primary hover:underline">+ Add Expectation & Notes</a>

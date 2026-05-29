@@ -16,11 +16,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ─── No underline on any link ────────── */
-a, a:hover, a:active, a:focus, a:visited {
-    text-decoration: none !important;
-}
-
 /* ─── Material Symbols ────────────────────────────────────── */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -200,7 +195,7 @@ button.red:hover, .button.red:hover { background-color: #882121; }
 
 /* ─── Links ───────────────────────────────────────────────── */
 a:link, a:visited { color: #007bff; text-decoration: none; }
-a:hover { text-decoration: none; }
+a:hover { text-decoration: underline; }
 
 a:link.green, a:visited.green { color: #28a745; }
 a:link.green:hover, a:visited.green:hover { color: #218838; }
@@ -281,7 +276,7 @@ a:link.green:hover, a:visited.green:hover { color: #218838; }
     font-size: 0.9em;
 }
 
-.banner a:link, .banner a:visited { color: #ffffff; text-decoration: none; }
+.banner a:link, .banner a:visited { color: #ffffff; text-decoration: underline; }
 .login-banner { background-color: red; }
 
 /* ─── Badges ──────────────────────────────────────────────── */

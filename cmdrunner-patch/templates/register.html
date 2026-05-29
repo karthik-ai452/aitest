@@ -1,0 +1,55 @@
+{% extends "base_guest.html" %}
+{% block title %}Register — CmdRunner{% endblock %}
+{% block content %}
+<div class="w-full max-w-md mx-auto px-4">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+        <img src="{{ url_for('static', filename='cmdrunner_logo_v3.png') }}" alt="CmdRunner" class="h-12 mx-auto"/>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-3">Create your account</p>
+    </div>
+
+    <!-- Register Card -->
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6">
+        <form method="POST" class="space-y-4">
+            <div>
+                <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">FULL NAME</label>
+                <input type="text" name="name" required autofocus
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary"
+                    placeholder="John Doe"/>
+            </div>
+            <div>
+                <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">EMAIL</label>
+                <input type="email" name="email" required
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary"
+                    placeholder="you@example.com"/>
+            </div>
+            <div>
+                <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">PASSWORD</label>
+                <input type="password" name="password" required
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary"
+                    placeholder="Choose a password"/>
+            </div>
+            <div>
+                <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CONFIRM PASSWORD</label>
+                <input type="password" name="confirm_password" required
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary"
+                    placeholder="Confirm your password"/>
+            </div>
+            <div class="pt-2">
+                <button type="submit" class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-2.5 rounded-lg hover:opacity-90 transition-opacity">
+                    Create Account
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="text-center mt-6 space-y-2">
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+            Already have an account? <a href="/login" class="text-primary hover:underline">Sign in</a>
+        </p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+            &copy; CmdRunner
+        </p>
+    </div>
+</div>
+{% endblock %}
