@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}CmdRunner{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?7"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='js/lightbox2/css/lightbox.min.css') }}"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}"/>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Geist:wght@400;500;600;900&display=swap" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='js/tailwind-config.js') }}"></script>
+    <script>tailwind.config = window.CMDRUNNER_TAILWIND;</script>
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-background text-on-surface" data-page="{% block page_id %}dashboard{% endblock %}">
+
+    <!-- ═══ Sidebar Navigation (inlined from partials/sidebar.html) ═══ -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-low border-r border-outline-variant flex flex-col py-margin-desktop z-50">
+        <!-- Logo / Brand -->
+        <div class="flex items-center justify-between px-6 mb-8 sidebar-header">
+            <a href="/" class="flex items-center gap-3">
+                <img src="{{ url_for('static', filename='cmdrunner_logo.png') }}" alt="CmdRunner" class="sidebar-logo w-10 h-10 rounded-lg"/>
+                <div>
+                    <h1 class="sidebar-title font-headline-md text-headline-md font-bold text-on-surface">CmdRunner</h1>
+                    <p class="sidebar-subtitle font-label-caps text-label-caps text-on-surface-variant opacity-70">QA ENGINEERING</p>
+                </div>
+            </a>
+            <button id="sidebar-toggle" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded hover:bg-surface-container-highest" title="Toggle sidebar">
+                <span class="material-symbols-outlined" data-icon="menu_open">menu_open</span>
+            </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 space-y-1">
+            {% set nav_items = [
+                ('dashboard', '/', 'dashboard', 'Dashboard'),
+                ('suites', '/test_suites', 'collections_bookmark', 'Test Suites'),
+                ('runs', '/test_runs', 'history_toggle_off', 'Test Runs'),
+                ('agents', '/agents', 'smart_toy', 'Agents'),
+] %}
+        {% for id, href, icon, label in nav_items %}
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'text-primary border-l-2 border-primary bg-surface-container-high' if page_id == id else 'text-on-surface-variant hover:bg-surface-container-highest' }} transition-colors duration-200" href="{{ href }}">
+            <span class="material-symbols-outlined" data-icon="{{ icon }}">{{ icon }}</span>
+            <span class="nav-label font-body-md text-body-md">{{ label }}</span>
+        </a>
+        {% endfor %}
+        </nav>
+
+        <!-- Bottom Section -->
+        <div class="mt-auto border-t border-outline-variant pt-4">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200" href="/docs">
+                <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                <span class="nav-label font-body-md text-body-md">Documentation</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ═══ Top Navigation Bar (inlined from partials/topnav.html) ═══ -->
+    <header id="topnav" class="fixed top-0 right-0 h-16 bg-surface border-b border-outline-variant flex justify-end items-center px-8 ml-sidebar-width w-[calc(100%-260px)] z-40">
+        <div class="relative">
+            <button id="profile-btn" class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <div class="w-full h-full flex items-center justify-center bg-primary-container text-on-primary-container font-body-sm text-body-sm">K</div>
+            </button>
+            <div id="profile-dropdown" class="hidden absolute right-0 top-12 w-56 bg-surface-container border border-outline-variant rounded-xl shadow-2xl overflow-hidden z-50">
+                <div class="px-4 py-3 border-b border-outline-variant">
+                    <p class="font-body-md text-body-md text-on-surface font-medium">User</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">user@example.com</p>
+                </div>
+                <div class="py-1">
+                    <button id="change-pwd-btn" class="flex items-center gap-3 w-full px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-high transition-colors text-left">
+                        <span class="material-symbols-outlined text-lg">lock</span>
+                        <span class="font-body-sm text-body-sm">Change Password</span>
+                    </button>
+                    <a href="/billing" class="flex items-center gap-3 w-full px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-high transition-colors text-left">
+                        <span class="material-symbols-outlined text-lg">credit_card</span>
+                        <span class="font-body-sm text-body-sm">Billing</span>
+                    </a>
+                    <button id="logout-btn" class="flex items-center gap-3 w-full px-4 py-2.5 text-error hover:bg-surface-container-high transition-colors text-left">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                        <span class="font-body-sm text-body-sm">Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages fixed top-20 right-6 z-[150] space-y-2 max-w-sm">
+        {% for category, message in messages %}
+        <div class="flash-message flash-msg toast toast-{{ 'success' if category == 'success' else 'error' if category == 'error' else 'info' }} show cursor-pointer" onclick="this.remove()">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Canvas -->
+    <main id="main-content" class="ml-sidebar-width pt-16 min-h-screen">
+        <div class="p-margin-desktop max-w-container-max mx-auto page-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- ═══ Change Password Modal (inlined from partials/modals.html) ═══ -->
+    <div id="change-pwd-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]">
+        <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="font-headline-md text-headline-md text-on-surface mb-1">Change Password</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-6">Enter your current password and choose a new one.</p>
+            <form id="change-pwd-form" class="space-y-4">
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CURRENT PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Enter current password"/>
+                </div>
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">NEW PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Enter new password"/>
+                </div>
+                <div>
+                    <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">CONFIRM NEW PASSWORD</label>
+                    <input type="password" required class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary" placeholder="Confirm new password"/>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-primary-container text-on-primary-container font-label-caps text-label-caps py-2.5 rounded-lg hover:opacity-90 transition-opacity">Update Password</button>
+                    <button type="button" id="change-pwd-cancel" class="flex-1 border border-outline-variant text-on-surface-variant font-label-caps text-label-caps py-2.5 rounded-lg hover:bg-surface-container-high transition-colors">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="full-page-loading hidden"><div class="spinner"></div></div>
+
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='public.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lightbox2/js/lightbox-plus-jquery.min.js') }}"></script>
+    {% endblock %}
+
+    <!-- Auto-dismiss flash messages -->
+    <script>
+        (function(){
+            var msgs = document.querySelectorAll('.flash-msg');
+            msgs.forEach(function(m){
+                setTimeout(function(){
+                    m.classList.remove('show');
+                    setTimeout(function(){ m.remove(); }, 300);
+                }, 4000);
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block page_id %}docs{% endblock %}
+{% block title %}ngrok Guide — CmdRunner{% endblock %}
+
+{% block head %}
+<style>
+    .toc-link { transition: color 0.15s; }
+    .toc-link:hover { color: var(--md-sys-color-primary); }
+    .guide-section { scroll-margin-top: 5rem; }
+    pre {
+        background: var(--md-sys-color-surface-container-low);
+        border: 1px solid var(--md-sys-color-outline-variant);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        overflow-x: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--md-sys-color-on-surface);
+    }
+    code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875em;
+        background: var(--md-sys-color-surface-container);
+        padding: 0.15em 0.4em;
+        border-radius: 0.25rem;
+    }
+    pre code {
+        background: none;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <a href="/docs" class="font-body-sm text-body-sm text-primary hover:underline flex items-center gap-1 mb-4">
+        <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Documentation
+    </a>
+    <div class="flex items-center gap-3 mb-4">
+        <div class="p-2 bg-primary-container/20 rounded-lg">
+            <span class="material-symbols-outlined text-primary text-2xl">share</span>
+        </div>
+        <span class="font-label-caps text-label-caps text-on-surface-variant">GUIDE</span>
+    </div>
+    <h1 class="font-display-lg text-display-lg text-on-surface mb-2">Sharing API Keys with ngrok</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">A complete guide to securely exposing your local API to the internet using ngrok.</p>
+</div>
+
+<!-- Table of Contents -->
+<div class="bg-surface-container border border-outline-variant rounded-2xl p-6 mb-8">
+    <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-3">TABLE OF CONTENTS</h3>
+    <ol class="space-y-2 list-decimal list-inside">
+        <li><a href="#what-is-ngrok" class="toc-link font-body-md text-body-md text-primary">What is ngrok?</a></li>
+        <li><a href="#installation" class="toc-link font-body-md text-body-md text-primary">Installation</a></li>
+        <li><a href="#basic-usage" class="toc-link font-body-md text-body-md text-primary">Basic Usage</a></li>
+        <li><a href="#sharing-api-keys" class="toc-link font-body-md text-body-md text-primary">Sharing API Keys</a></li>
+        <li><a href="#security-best-practices" class="toc-link font-body-md text-body-md text-primary">Security Best Practices</a></li>
+        <li><a href="#troubleshooting" class="toc-link font-body-md text-body-md text-primary">Troubleshooting</a></li>
+    </ol>
+</div>
+
+<!-- Sections -->
+<div class="prose max-w-none space-y-8">
+    <section id="what-is-ngrok" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">1. What is ngrok?</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4">
+            ngrok is a tool that creates secure tunnels from a public URL to your local machine. It's perfect for testing webhooks, sharing local APIs, and demoing projects without deploying.
+        </p>
+    </section>
+
+    <section id="installation" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">2. Installation</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4">Install ngrok via your package manager or download directly:</p>
+        <pre><code># macOS
+brew install ngrok
+
+# Linux (snap)
+snap install ngrok
+
+# Or download from https://ngrok.com/download</code></pre>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-4">Then authenticate with your ngrok account:</p>
+        <pre><code>ngrok config add-authtoken YOUR_AUTH_TOKEN</code></pre>
+    </section>
+
+    <section id="basic-usage" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">3. Basic Usage</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4">Expose a local port to the internet:</p>
+        <pre><code># Expose local server on port 8000
+ngrok http 8000</code></pre>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-4">ngrok will display a forwarding URL like:</p>
+        <pre><code>Forwarding  https://abc123.ngrok-free.app -> http://localhost:8000</code></pre>
+    </section>
+
+    <section id="sharing-api-keys" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">4. Sharing API Keys</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4">
+            Use ngrok to expose your local CmdRunner API so external services (like Paddle, Slack, or GitHub) can reach your webhook endpoints.
+        </p>
+        <pre><code># Start your local API
+python -m cmdrunner_web --port 8000
+
+# In another terminal, create a tunnel
+ngrok http 8000</code></pre>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-4">Use the ngrok forwarding URL as your webhook endpoint:</p>
+        <pre><code># Example webhook URL
+https://abc123.ngrok-free.app/webhook/paddle</code></pre>
+    </section>
+
+    <section id="security-best-practices" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">5. Security Best Practices</h2>
+        <ul class="list-disc list-inside space-y-2 font-body-md text-body-md text-on-surface-variant">
+            <li>Never share your ngrok authtoken publicly</li>
+            <li>Use webhook signature verification on all incoming requests</li>
+            <li>Close ngrok tunnels when not in use</li>
+            <li>Use ngrok's built-in basic auth for sensitive endpoints: <code>ngrok http 8000 --auth="user:pass"</code></li>
+        </ul>
+    </section>
+
+    <section id="troubleshooting" class="guide-section">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-3">6. Troubleshooting</h2>
+        <div class="space-y-4">
+            <div class="bg-surface-container border border-outline-variant rounded-xl p-4">
+                <h4 class="font-body-md text-body-md text-on-surface font-semibold mb-1">"Tunnel session failed"</h4>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Make sure your local server is running before starting ngrok. Check the port matches.</p>
+            </div>
+            <div class="bg-surface-container border border-outline-variant rounded-xl p-4">
+                <h4 class="font-body-md text-body-md text-on-surface font-semibold mb-1">"Account limited"</h4>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Free ngrok accounts have limits. Upgrade your plan or use a custom domain.</p>
+            </div>
+            <div class="bg-surface-container border border-outline-variant rounded-xl p-4">
+                <h4 class="font-body-md text-body-md text-on-surface font-semibold mb-1">Connection refused</h4>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Your local service isn't listening on the port ngrok is forwarding to. Verify the port number.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

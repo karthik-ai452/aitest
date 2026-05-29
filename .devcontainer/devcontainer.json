@@ -1,0 +1,12 @@
+{
+  "postCreateCommand": "pip install -r requirements.txt",
+  "postStartCommand": "python3 app.py",
+  "forwardPorts": [5000],
+  "portsAttributes": {
+    "5000": {
+      "label": "CmdRunner",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "waitFor": "postCreateCommand"
+}

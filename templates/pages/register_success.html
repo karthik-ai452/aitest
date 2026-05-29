@@ -1,0 +1,12 @@
+{% extends "base_guest.html" %}
+{% block title %}Registration Successful — CmdRunner{% endblock %}
+{% block content %}
+<div class="w-full max-w-md mx-auto px-4 text-center">
+    <div class="p-4 bg-surface-container rounded-2xl inline-block mb-6">
+        <span class="material-symbols-outlined text-primary text-5xl">check_circle</span>
+    </div>
+    <h1 class="font-display-lg text-display-lg text-on-surface mb-3">Registration Successful!</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-6">Your account has been created. An administrator will review and approve your account shortly.</p>
+    <a href="/login" class="inline-block bg-primary-container text-on-primary-container font-label-caps text-label-caps px-6 py-2.5 rounded-lg hover:opacity-90 transition-opacity">Go to Login</a>
+</div>
+{% endblock %}
