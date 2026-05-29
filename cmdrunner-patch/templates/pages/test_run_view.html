@@ -8,61 +8,23 @@
             <span class="material-symbols-outlined">arrow_back</span>
         </a>
         <h2 class="font-display-lg text-display-lg text-on-surface">Test Run Details</h2>
-    </div>
-</div>
-
-<!-- Run Header -->
-{% if run %}
-<div class="bg-surface-container border border-outline-variant rounded-2xl p-6 mb-6">
-    <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-primary-container/15 rounded-lg border border-primary/20">
-                <span class="material-symbols-outlined text-primary">history_toggle_off</span>
-            </div>
-            <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">TR-{{ "%04d" | format(run.id) }}</h3>
-                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ run.created_at[:10] if run.created_at else 'N/A' }}</p>
-            </div>
-        </div>
-        {% set status = run.status|string|lower %}
-        {% if status == 'passed' or status == 'success' %}
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30">
-            <span class="w-2 h-2 rounded-full bg-secondary"></span>
-            <span class="font-label-caps text-label-caps text-secondary">Passed</span>
-        </span>
-        {% elif status == 'failed' or status == 'failure' %}
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 border border-error/30">
-            <span class="w-2 h-2 rounded-full bg-error"></span>
-            <span class="font-label-caps text-label-caps text-error">Failed</span>
-        </span>
-        {% elif status == 'running' or status == 'in_progress' %}
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/30">
-            <span class="w-2 h-2 rounded-full bg-primary animate-spin"></span>
-            <span class="font-label-caps text-label-caps text-primary">Running</span>
-        </span>
-        {% else %}
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-on-surface-variant/10 border border-outline-variant">
-            <span class="font-label-caps text-label-caps text-on-surface-variant">{{ run.status|capitalize }}</span>
-        </span>
+        {% if test_run_id %}
+        <span class="font-body-md text-body-md text-on-surface-variant ml-2">TR-{{ "%04d" | format(test_run_id) }}</span>
         {% endif %}
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">TEST SUITE</p>
-            <p class="font-body-md text-body-md text-on-surface font-medium">{{ run.test_suite_name or 'N/A' }}</p>
-        </div>
-        <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">DURATION</p>
-            <p class="font-body-md text-body-md text-on-surface font-medium">{{ run.duration_secs ~ ' seconds' if run.duration_secs else 'N/A' }}</p>
-        </div>
-        <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
-            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STARTED</p>
-            <p class="font-body-md text-body-md text-on-surface font-medium">{{ run.created_at[:19] if run.created_at else 'N/A' }}</p>
-        </div>
+    <div class="flex items-center gap-4 mt-2">
+        {% if test_run_id %}
+        <a href="/test_runs/{{ test_run_id }}/logs" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg border border-outline-variant text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-base">download</span> Download logs
+        </a>
+        {% endif %}
+        {% if summary %}
+        <a href="#summary" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg border border-outline-variant text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-base">summarize</span> View Summary
+        </a>
+        {% endif %}
     </div>
 </div>
-{% endif %}
 
 <!-- Test Results Table -->
 <div class="bg-surface-container border border-outline-variant rounded-2xl overflow-hidden mb-6">
@@ -88,17 +50,52 @@
                         {% if result.failure_reason %}
                         <div class="text-error font-body-sm text-body-sm mt-1">{{ result.failure_reason }}</div>
                         {% endif %}
+
+                        {% if result.actions and result.actions | length > 0 %}
+                        <div class="mt-3 space-y-1.5 border-l-2 border-outline-variant pl-3">
+                            {% for action in result.actions %}
+                            <div class="flex items-start gap-2">
+                                <i class="fa fa-{{ action.icon }} text-on-surface-variant text-xs mt-1"></i>
+                                <span class="font-body-sm text-body-sm text-on-surface">{{ action.message }}</span>
+                                {% if action.screenshot %}
+                                [<a target="_blank" data-lightbox="gallery" data-title="{{ action.message }}" href="/test_runs/{{ test_run_id }}/screenshot/{{ action.id }}" class="text-primary hover:underline">View screenshot</a>]
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if result.logs and result.logs | length > 0 %}
+                        <details class="mt-2">
+                            <summary class="font-body-sm text-body-sm text-primary cursor-pointer hover:underline">View logs ({{ result.logs | length }})</summary>
+                            <div class="mt-2 bg-surface-container-lowest rounded-lg p-3 space-y-1 max-h-60 overflow-y-auto">
+                                {% for log in result.logs %}
+                                <div class="flex gap-2 font-body-sm text-body-sm">
+                                    <span class="text-on-surface-variant whitespace-nowrap">{{ log.log_time }}</span>
+                                    <span class="text-on-surface-variant">[{{ log.type }}]</span>
+                                    <span class="text-on-surface">{{ log.message }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 font-code-sm text-code-sm text-on-surface-variant">{{ result.timestamp }}</td>
                     <td class="px-6 py-4">
                         {% set rstatus = result.status|string|lower %}
                         {% if rstatus == 'passed' or rstatus == 'success' %}
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/10 border border-secondary/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                             <span class="font-label-caps text-label-caps text-secondary text-xs">Passed</span>
                         </span>
                         {% elif rstatus == 'failed' or rstatus == 'failure' %}
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-error/10 border border-error/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
                             <span class="font-label-caps text-label-caps text-error text-xs">Failed</span>
+                        </span>
+                        {% elif rstatus == 'in_progress' %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30">
+                            <span class="font-label-caps text-label-caps text-primary text-xs">Running</span>
                         </span>
                         {% else %}
                         <span class="font-label-caps text-label-caps text-on-surface-variant text-xs">{{ result.status | capitalize }}</span>
@@ -122,7 +119,7 @@
 <!-- Summary -->
 {% if summary %}
 <div id="summary" class="bg-surface-container border border-outline-variant rounded-2xl p-6">
-    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Summary</h3>
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">AI Summary</h3>
     <div class="font-body-md text-body-md text-on-surface prose">
         {{ summary | safe }}
     </div>

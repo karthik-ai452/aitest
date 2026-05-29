@@ -16,8 +16,8 @@
             </tr>
         </thead>
         <tbody>
-            {% if runs and runs | length > 0 %}
-            {% for run in runs %}
+            {% if test_runs and test_runs | length > 0 %}
+            {% for run in test_runs %}
             <tr class="border-b border-[#e2e8f0]">
                 <td class="py-3 px-4 text-[#4a5568]">{{ run.test_suite_name }}</td>
                 <td class="py-3 px-4">
