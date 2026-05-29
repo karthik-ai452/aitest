@@ -5,20 +5,26 @@
 {% block title %}Agents — CmdRunner{% endblock %}
 
 {% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h2 class="font-display-lg text-display-lg text-on-surface">Agents</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Upload test suites and run automated browser tests powered by AI agents.</p>
+</div>
+
 <!-- Action Bar -->
 <div class="flex flex-wrap items-center gap-3 mb-6">
     <div class="flex items-center gap-3">
-        <button id="upload-test-suite" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#2196F3] text-white hover:opacity-90 transition-opacity">
+        <button id="btn-upload" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#2196F3] text-white hover:opacity-90 transition-opacity">
             <span class="material-symbols-outlined text-lg">upload_file</span>
             Upload test suite
         </button>
-        <button id="run-test-suite" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#4CAF50] text-white hover:opacity-90 transition-opacity disabled">
+        <button id="btn-run" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#4CAF50] text-white hover:opacity-90 transition-opacity">
             <span class="material-symbols-outlined text-lg">play_arrow</span>
             Run
         </button>
     </div>
     <div class="flex-1"></div>
-    <button id="stop" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#9E9E9E] text-white hover:opacity-90 transition-opacity disabled">
+    <button id="btn-stop" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-label-caps text-label-caps bg-[#9E9E9E] text-white hover:opacity-90 transition-opacity">
         <span class="material-symbols-outlined text-lg">stop</span>
         Stop
     </button>
@@ -27,464 +33,35 @@
 <!-- Two-Panel Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6" style="min-height: 500px;">
     <!-- Left Panel: Test Cases -->
-    <div id="test-case-container" class="bg-surface-container border border-outline-variant rounded-2xl p-4 flex flex-col min-h-[500px] overflow-y-auto">
-        <!-- Start note -->
-        <div class="start-note flex flex-col items-center justify-center text-center py-12">
-            <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-4">description</span>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">No test cases loaded</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
-                To start, upload a test case file (.xls, .pdf or .txt).<br>
-                Once uploaded, the test cases will be displayed here.
-            </p>
-        </div>
-
-        <!-- Loading -->
-        <div class="loading flex-col items-center justify-center text-center py-12" style="display: none;">
-            <div class="spinner mb-4"></div>
-            <p class="starting-browser-text font-body-md text-body-md text-on-surface-variant">Loading test cases...</p>
-        </div>
-
-        <!-- Test cases rendered here -->
-        <div class="test-cases"></div>
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+        <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-4">description</span>
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">No test cases loaded</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+            To start, upload a test case file (.xls, .pdf or .txt).<br>
+            Once uploaded, the test cases will be displayed here.
+        </p>
     </div>
 
     <!-- Right Panel: Browser Display -->
-    <div class="bg-[#1a1a1a] border border-outline-variant rounded-2xl min-h-[500px] relative overflow-hidden">
-        <!-- Placeholder -->
-        <div class="browser-placeholder flex flex-col items-center justify-center text-center h-full">
-            <span class="material-symbols-outlined text-white/50 text-5xl mb-4">language</span>
-            <p class="font-body-lg text-body-lg text-white/70">
-                Browser will be displayed here.
-            </p>
-        </div>
-
-        <!-- Starting browser message -->
-        <div class="starting-browser flex-col items-center justify-center text-center h-full absolute inset-0 bg-[#1a1a1a]" style="display: none;">
-            <div class="spinner mb-4"></div>
-            <p class="starting-browser-text font-body-md text-body-md text-white/70">Starting browser...</p>
-        </div>
-
-        <!-- noVNC viewer iframe -->
-        <iframe id="viewer" class="absolute inset-0 w-full h-full rounded-2xl" style="border: 0; display: none;" src="about:blank"></iframe>
+    <div class="bg-[#1a1a1a] border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+        <span class="material-symbols-outlined text-white/50 text-5xl mb-4">language</span>
+        <p class="font-body-lg text-body-lg text-white/70">
+            Browser will be displayed here.
+        </p>
     </div>
 </div>
 
-<!-- Action message toast -->
-<div class="action-message fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface-container border border-outline-variant rounded-xl px-6 py-3 font-body-md text-body-md text-on-surface shadow-2xl z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"></div>
-
-<!-- Hidden file input -->
-<input type="file" id="test-suite-file" class="hidden" accept=".xls,.xlsx,.pdf,.txt" />
+<!-- Hidden file input for upload -->
+<input type="file" id="file-upload-input" class="hidden" accept=".xls,.xlsx,.pdf,.txt" />
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='public.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <script>
-/* ═══ Agents Page — Test Suite Runner ═══ */
-(function() {
-    'use strict';
-
-    const upload_test_suite_button = document.querySelector("#upload-test-suite");
-    const test_suite_file = document.querySelector("#test-suite-file");
-    const test_case_container = document.getElementById('test-case-container');
-    const viewer = document.querySelector("#viewer");
-    const run_button = document.querySelector("#run-test-suite");
-    const stop_button = document.querySelector("#stop");
-
-    let eventSource;
-    let agent_running = false;
-    let global_run_uuid = null;
-    let browser_started = false;
-    let stop_abort = null;
-    let loaded_test_suite;
-
-    const status_icons = {
-        not_started: '⚪',
-        in_progress: '🔵',
-        success: '🟢',
-        failure: '🔴',
-        stopped: '❌',
-    };
-
-    // ─── Render test suite in left panel ──────────────
-    function render_test_suite(test_suite) {
-        const container = document.querySelector("#test-case-container .test-cases");
-        container.innerHTML = '';
-
-        let last_test = null;
-
-        test_suite.test_cases.forEach(test_case => {
-            const test_case_div = document.createElement('div');
-            test_case_div.className = 'test-case';
-
-            const header = document.createElement('div');
-            header.className = 'test-case-header';
-            header.innerHTML = `<span class="status">${status_icons[test_case.status]}</span> ${test_case.name}`;
-            test_case_div.appendChild(header);
-
-            let failed = false;
-
-            test_case.steps.forEach(step => {
-                let status = step.status;
-                if (failed) status = "not_started";
-                if (status === "failure") failed = true;
-
-                const step_div = document.createElement('div');
-                step_div.className = 'step';
-                step_div.innerHTML = `<span class="status">${status_icons[status]}</span> ${step.name}`;
-                test_case_div.appendChild(step_div);
-
-                if (status !== "not_started") {
-                    last_test = step_div;
-                }
-            });
-
-            container.appendChild(test_case_div);
-        });
-
-        if (last_test) {
-            last_test.classList.add('current-step');
-            const offset = last_test.offsetTop + (last_test.offsetHeight * 2) + 14;
-            const diff = offset - test_case_container.offsetHeight;
-            if (diff > 0) {
-                test_case_container.scrollTop = diff;
-            }
-        }
-    }
-
-    // ─── Loading messages ─────────────────────────────
-    const loading_messages = [
-        "Just a moment, please...",
-        "Almost ready...",
-        "Here we go...",
-        "Thank you for waiting...",
-        "This will only take a moment...",
-        "Good things take time...",
-        "Any day now...",
-    ];
-
-    let loading_message_timeout;
-    function show_loading_messages(index) {
-        clearTimeout(loading_message_timeout);
-        loading_message_timeout = setTimeout(() => {
-            if (loading_messages.length > index + 1) {
-                document.querySelector(".starting-browser-text").textContent = loading_messages[index];
-                show_loading_messages(index + 1);
-            } else {
-                document.querySelector(".starting-browser-text").textContent = "This is taking longer than expected...";
-            }
-        }, 7000);
-    }
-
-    function loading_test_cases() {
-        document.querySelector("#test-case-container .test-cases").style.display = 'none';
-        document.querySelectorAll("#test-case-container .start-note").forEach(n => n.style.display = 'none');
-        document.querySelector("#test-case-container .loading").style.display = 'flex';
-        run_button.classList.add("disabled");
-    }
-
-    function loading_test_cases_done() {
-        document.querySelector("#test-case-container .test-cases").style.display = 'block';
-        document.querySelector("#test-case-container .loading").style.display = 'none';
-        document.querySelectorAll("#test-case-container .start-note").forEach(n => n.style.display = 'none');
-    }
-
-    function loading_test_cases_error() {
-        document.querySelector("#test-case-container .test-cases").style.display = 'none';
-        document.querySelector("#test-case-container .loading").style.display = 'none';
-        document.querySelector("#test-case-container .start-note").style.display = 'flex';
-    }
-
-    // ─── Browser panel states ─────────────────────────
-    function show_browser_placeholder() {
-        global_run_uuid = null;
-        agent_running = false;
-        document.querySelector(".browser-placeholder").style.display = 'flex';
-        viewer.style.display = 'none';
-        viewer.src = 'about:blank';
-    }
-
-    function hide_browser_placeholder() {
-        document.querySelector(".browser-placeholder").style.display = 'none';
-    }
-
-    function starting_browser() {
-        browser_started = false;
-        hide_browser_placeholder();
-        document.querySelector(".starting-browser").style.display = 'flex';
-        document.querySelector(".starting-browser-text").textContent = "Starting browser...";
-        show_loading_messages(0);
-    }
-
-    function starting_browser_done() {
-        document.querySelector(".starting-browser").style.display = 'none';
-        document.querySelector(".starting-browser-text").textContent = "Starting browser...";
-        clearTimeout(loading_message_timeout);
-        browser_started = true;
-    }
-
-    function generating_summary() {
-        hide_browser_placeholder();
-        viewer.style.display = 'none';
-        document.querySelector(".starting-browser").style.display = 'flex';
-        document.querySelector(".starting-browser-text").textContent = "Examining failure cause...";
-        show_loading_messages(0);
-    }
-
-    function learning() {
-        hide_browser_placeholder();
-        viewer.style.display = 'none';
-        document.querySelector(".starting-browser").style.display = 'flex';
-        document.querySelector(".starting-browser-text").textContent = "Learning from mistakes...";
-        show_loading_messages(0);
-    }
-
-    function finishing_up() {
-        hide_browser_placeholder();
-        viewer.style.display = 'none';
-        document.querySelector(".starting-browser").style.display = 'flex';
-        document.querySelector(".starting-browser-text").textContent = "Finishing up...";
-        show_loading_messages(0);
-    }
-
-    // ─── State management ─────────────────────────────
-    function set_state_stopped() {
-        show_browser_placeholder();
-        run_button.classList.remove("disabled");
-        upload_test_suite_button.classList.remove("disabled");
-        stop_button.textContent = "Stop";
-        stop_button.classList.add("disabled");
-    }
-
-    // ─── Action message toast ─────────────────────────
-    let action_show_timeout, action_hide_timeout;
-    function show_action_message(message) {
-        const el = document.querySelector(".action-message");
-        if (el.textContent === message) return;
-        if (el.classList.contains("showing")) { el.classList.remove("showing"); var delay = 400; } else { var delay = 0; }
-        clearTimeout(action_show_timeout);
-        action_show_timeout = setTimeout(() => { el.textContent = message; el.classList.add("showing"); el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)'; }, delay);
-        clearTimeout(action_hide_timeout);
-        action_hide_timeout = setTimeout(() => { el.classList.remove("showing"); el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(1rem)'; }, 5000);
-    }
-
-    // ─── Agent actions (stop/pause/continue/try_again) ──
-    async function agent_action(action, message, abort_controller) {
-        if (!global_run_uuid) { show_alert("No agent is running."); return false; }
-        const formData = new FormData();
-        formData.append("run_uuid", global_run_uuid);
-        formData.append("action", action);
-        formData.append("message", message || "");
-        try {
-            const response = await fetch("/agent_action", { method: "POST", body: formData, signal: abort_controller?.signal });
-            if (abort_controller?.signal.aborted) return false;
-            if (!response.ok) { const error = await response.json(); show_alert("Error: " + error.error); return false; }
-            const r = await response.json();
-            if (r.error) { show_alert("Error: " + r.error); return false; }
-            return true;
-        } catch(e) { return false; }
-    }
-
-    async function pause_agent() {
-        stop_button.textContent = "Stopping...";
-        stop_button.classList.add("disabled");
-        if (stop_abort) stop_abort.abort();
-        stop_abort = new AbortController();
-        const paused = await agent_action("pause", "", stop_abort);
-        if (paused) {
-            stop_button.textContent = "Continue";
-            stop_button.classList.add("paused");
-            stop_button.classList.remove("disabled");
-            show_prompt("Agent Paused", 'The agent has been paused.<input type="text" placeholder="Optional message to the agent..." class="agent-message" />', {
-                "Continue|green": async (prompt_box) => { const msg = prompt_box.querySelector(".agent-message").value; await continue_agent(msg); },
-                "Stop|danger": async () => { await stop_agent(); }
-            }, {timeout: 60000 * 5});
-        } else {
-            stop_button.textContent = "Stop";
-            stop_button.classList.remove("disabled");
-        }
-    }
-
-    async function continue_agent(message) {
-        stop_button.textContent = "Continuing...";
-        stop_button.classList.add("disabled");
-        if (stop_abort) stop_abort.abort();
-        stop_abort = new AbortController();
-        const continued = await agent_action("continue", message || "", stop_abort);
-        if (continued) {
-            stop_button.textContent = "Stop";
-            stop_button.classList.remove("paused");
-            stop_button.classList.remove("disabled");
-        }
-    }
-
-    async function stop_agent() {
-        stop_button.textContent = "Stopping...";
-        stop_button.classList.add("disabled");
-        stop_button.classList.remove("paused");
-        document.querySelector(".starting-browser-text").textContent = "Stopping...";
-        clearTimeout(loading_message_timeout);
-        if (stop_abort) stop_abort.abort();
-        stop_abort = new AbortController();
-        await agent_action("stop", "", stop_abort);
-    }
-
-    // ─── Run test suite ───────────────────────────────
-    function run_test_suite(id) {
-        if (stop_abort) stop_abort.abort();
-        run_button.classList.add("disabled");
-        upload_test_suite_button.classList.add("disabled");
-        starting_browser();
-        agent_running = true;
-        if (eventSource) eventSource.close();
-
-        eventSource = new EventSource("/run_test_suite/" + id);
-
-        eventSource.onerror = function(event) {
-            show_browser_placeholder();
-            show_alert("An error occurred while running the agent");
-            console.error("EventSource error:", event);
-            eventSource.close();
-        };
-
-        eventSource.onmessage = function(event) {
-            let data;
-            try { data = JSON.parse(event.data); } catch (e) { show_alert("Unknown error"); console.error("Error parsing JSON:", e); return; }
-
-            if (data.type === "finished") {
-                if (!viewer.src || viewer.src === "about:blank") {
-                    show_alert("Unable to start browser");
-                } else if (global_run_uuid) {
-                    if (stop_abort) stop_abort.abort();
-                    if (data.status === "success") { show_alert("Agent finished successfully"); }
-                    else if (data.status === "failure") { show_alert("Agent finished with a failure", "danger"); }
-                    else { show_alert("Agent was stopped"); }
-                }
-                set_state_stopped();
-                eventSource.close();
-            } else if (data.type === "error") {
-                show_alert(data.message);
-                set_state_stopped();
-                eventSource.close();
-            } else if (data.type === "connection_error") {
-                show_alert("Sorry, there was a connection error");
-                set_state_stopped();
-                eventSource.close();
-            } else if (data.type === "progress") {
-                if (data.progress.test_cases[0].status !== "not_started") { starting_browser_done(); }
-                loading_test_cases_done();
-                render_test_suite(data.progress);
-            } else if (data.type === "action_message") {
-                show_action_message(data.message);
-            } else if (data.type === "viewer_started") {
-                const port = data.port;
-                const password = data.password;
-                const host = window.location.hostname;
-                const protocol = window.location.protocol;
-                viewer.src = protocol + "//" + host + ":" + port + "/vnc.html?host=" + host + "&port=" + port + "#password=" + password;
-                viewer.style.display = 'block';
-            } else if (data.type === "failure") {
-                const choices = {};
-                if (data.hasOwnProperty("choices")) {
-                    if (data.choices.includes("try_again")) {
-                        choices["Try Again"] = async (prompt_box) => {
-                            stop_button.classList.remove("disabled");
-                            const msg = prompt_box.querySelector(".agent-message").value;
-                            if (msg) { await continue_agent(msg); } else { await agent_action("try_again"); }
-                        };
-                    }
-                    if (data.choices.includes("next_case")) {
-                        choices["Next Test Case|orange"] = async (prompt_box) => {
-                            stop_button.classList.remove("disabled");
-                            const msg = prompt_box.querySelector(".agent-message").value;
-                            await agent_action("next_case", msg);
-                        };
-                    }
-                    if (data.choices.includes("stop")) {
-                        stop_button.classList.add("disabled");
-                        choices["Stop|danger"] = async () => { await stop_agent(); };
-                    }
-                }
-                show_prompt("Test Case Failed", data.message + '<input type="text" placeholder="Optional message to the agent..." class="agent-message" />', choices, {timeout: 60000 * 5, class: "danger"});
-            } else if (data.type === "heartbeat") {
-                // no-op
-            } else if (data.type === "generating_summary") {
-                generating_summary();
-            } else if (data.type === "learning") {
-                learning();
-            } else if (data.type === "viewer_stopped") {
-                finishing_up();
-            } else if (data.type === "in_queue") {
-                document.querySelector(".starting-browser-text").textContent = "In queue, please wait...";
-                show_loading_messages(0);
-            } else if (data.type === "run_started") {
-                global_run_uuid = data.uuid;
-                stop_button.classList.remove("disabled");
-            } else {
-                show_alert("Agent encountered an error");
-                eventSource.close();
-                console.error("Unrecognized data", data);
-                set_state_stopped();
-            }
-        };
-    }
-
-    // ─── Upload button ────────────────────────────────
-    upload_test_suite_button.addEventListener("click", function(e) {
-        if (e.target.classList.contains("disabled")) return;
-        test_suite_file.click();
-    });
-
-    test_suite_file.addEventListener("change", async function() {
-        const upload_response = await upload_test_suite_file(test_suite_file, loading_test_cases, loading_test_cases_error);
-        if (!upload_response) return;
-        loaded_test_suite = upload_response.test_suite;
-        render_test_suite(loaded_test_suite);
-        loading_test_cases_done();
-        run_button.classList.remove("disabled");
-    });
-
-    // ─── Run button ───────────────────────────────────
-    run_button.addEventListener("click", async function(e) {
-        if (e.target.classList.contains("disabled")) return;
-        run_button.classList.add("disabled");
-        upload_test_suite_button.classList.add("disabled");
-
-        var id = loaded_test_suite.id || null;
-        if (!id) {
-            id = await create_test_suite(loaded_test_suite);
-            if (!id) {
-                show_alert("Error creating test suite. Please try again.");
-                run_button.classList.remove("disabled");
-                upload_test_suite_button.classList.remove("disabled");
-                return;
-            }
-            loaded_test_suite.id = id;
-        }
-        run_test_suite(id);
-    });
-
-    // ─── Stop button ──────────────────────────────────
-    stop_button.addEventListener("click", async function(e) {
-        if (e.target.classList.contains("disabled")) return;
-        if (e.target.classList.contains("paused")) {
-            await continue_agent();
-        } else {
-            if (browser_started) { await pause_agent(); } else { await stop_agent(); }
-        }
-    });
-
-    // ─── Auto-run from URL hash ───────────────────────
-    var hash = window.location.hash;
-    if (hash.startsWith("#!/run/")) {
-        var id = hash.split("/")[2];
-        if (id) {
-            loaded_test_suite = { "id": id };
-            loading_test_cases();
-            run_test_suite(id);
-            window.location.hash = "";
-        }
-    }
-})();
+// Wire up the upload button to trigger the hidden file input
+document.getElementById('btn-upload').addEventListener('click', function() {
+    document.getElementById('file-upload-input').click();
+});
 </script>
 {% endblock %}
