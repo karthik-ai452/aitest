@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}CmdRunner{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?7"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}"/>
+
+    <script>
+        (function(){try{var t=localStorage.getItem('cmdrunner-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Geist:wght@400;500;600;900&display=swap" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='js/tailwind-config.js') }}"></script>
+    <script>tailwind.config = window.CMDRUNNER_TAILWIND;</script>
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-background text-on-surface min-h-screen flex items-center justify-center">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages fixed top-6 right-6 z-[150] space-y-2 max-w-sm">
+        {% for category, message in messages %}
+        <div class="flash-message toast toast-{{ 'error' if category == 'error' else 'success' if category == 'success' else 'info' }} show mb-4 font-body-sm text-body-sm cursor-pointer" onclick="this.remove()">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <script src="{{ url_for('static', filename='public.js') }}"></script>
+</body>
+</html>
