@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block page_id %}docs{% endblock %}
+{% block title %}Documentation — CmdRunner{% endblock %}
+
+{% block head %}
+<style>
+    .doc-card {
+        transition: all 0.2s ease;
+    }
+    .doc-card:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-12">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="p-2 bg-primary-container/20 rounded-lg">
+            <span class="material-symbols-outlined text-primary text-2xl">menu_book</span>
+        </div>
+        <span class="font-label-caps text-label-caps text-on-surface-variant">DOCUMENTATION</span>
+    </div>
+    <h1 class="font-display-lg text-display-lg text-on-surface mb-2">Documentation</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Guides, references, and tutorials for the CmdRunner platform.</p>
+</div>
+
+<!-- Documentation Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+
+    <!-- ngrok Guide — Featured -->
+    <a href="/docs/ngrok" class="doc-card group lg:col-span-2 bg-surface-container border-2 border-primary/30 rounded-2xl p-6 hover:border-primary/60 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-primary-container text-on-primary-container font-label-caps text-label-caps px-3 py-1 rounded-bl-lg">GUIDE</div>
+        <div class="flex items-start gap-4">
+            <div class="p-3 bg-primary-container/15 rounded-xl border border-primary/20 flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-3xl">share</span>
+            </div>
+            <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors">Sharing API Keys with ngrok</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">A complete guide to securely exposing your local API to the internet using ngrok, so you can share API keys and test webhooks with external services.</p>
+                <span class="font-label-caps text-label-caps text-primary flex items-center gap-1">
+                    Read guide <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Getting Started -->
+    <a href="#" class="doc-card group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40">
+        <div class="flex items-start gap-4">
+            <div class="p-3 bg-primary-container/15 rounded-xl border border-primary/20 flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-3xl">rocket_launch</span>
+            </div>
+            <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors">Getting Started</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Learn how to set up CmdRunner and run your first test suite in minutes.</p>
+                <span class="font-label-caps text-label-caps text-primary flex items-center gap-1">
+                    Coming soon <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Test Suites -->
+    <a href="#" class="doc-card group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40">
+        <div class="flex items-start gap-4">
+            <div class="p-3 bg-primary-container/15 rounded-xl border border-primary/20 flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-3xl">collections_bookmark</span>
+            </div>
+            <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors">Test Suites Reference</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Everything you need to know about creating, editing, and organizing test suites.</p>
+                <span class="font-label-caps text-label-caps text-primary flex items-center gap-1">
+                    Coming soon <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+            </div>
+        </div>
+    </a>
+</div>
+{% endblock %}

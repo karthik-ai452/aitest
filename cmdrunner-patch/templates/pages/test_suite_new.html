@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block page_id %}suites{% endblock %}
+{% block content %}
+<div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+        <a href="/test_suites" class="text-on-surface-variant hover:text-primary transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h2 class="font-display-lg text-display-lg text-on-surface">Create New Test Suite</h2>
+    </div>
+</div>
+
+<!-- File Upload -->
+<div class="bg-surface-container border border-outline-variant rounded-2xl p-6 max-w-3xl mb-6">
+    <div class="text-center">
+        <button id="upload-new-test-suite" class="px-6 py-3 rounded-xl border-2 border-dashed border-outline-variant text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high transition-colors flex items-center gap-2 mx-auto">
+            <span class="material-symbols-outlined">upload_file</span> Upload a test suite file
+        </button>
+        <input type="file" id="test-suite-file" class="hidden" />
+    </div>
+    <script>
+        const upload_test_suite_button = document.querySelector("#upload-new-test-suite");
+        const test_suite_file = document.querySelector("#test-suite-file");
+
+        upload_test_suite_button.addEventListener("click", e => {
+            test_suite_file.click();
+        });
+
+        test_suite_file.addEventListener("change", async () => {
+            const upload_response = await upload_test_suite_file( test_suite_file, () => {
+                upload_test_suite_button.textContent = "Uploading...";
+            }, () => {
+                upload_test_suite_button.textContent = "Upload a test suite file";
+            } );
+            if( ! upload_response ) {
+                return;
+            }
+
+            const id = await create_test_suite( upload_response.test_suite );
+
+            if( ! id ) {
+                show_alert( "Error creating test suite. Please try again." );
+                return;
+            } else {
+                document.location.href = "/test_suites/" + id + "/edit";
+            }
+        });
+    </script>
+</div>
+
+<!-- Manual Create Form -->
+<div class="bg-surface-container border border-outline-variant rounded-2xl p-6 max-w-3xl">
+    <form method="POST" class="test-suite-form" action="/test_suites/new">
+        <!-- Suite Name -->
+        <div class="mb-6">
+            <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1.5">TEST SUITE NAME</label>
+            <input type="text" id="test-suite-name" placeholder="e.g. My Test Suite"
+                class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary">
+        </div>
+
+        <!-- Test Cases -->
+        <div class="mb-6">
+            <label class="font-label-caps text-label-caps text-on-surface-variant block mb-3">TEST CASES</label>
+            <div id="test-cases-list" class="space-y-4"></div>
+
+            <button type="button" class="js-add-testcase mt-3 w-full py-2.5 rounded-lg border-2 border-dashed border-outline-variant text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high transition-colors">+ Add test case</button>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+            <button type="submit" class="bg-primary-container text-on-primary-container font-label-caps text-label-caps py-2.5 px-6 rounded-lg hover:opacity-90 transition-opacity">Create Test Suite</button>
+            <a href="/test_suites" class="border border-outline-variant text-on-surface-variant font-label-caps text-label-caps py-2.5 px-6 rounded-lg hover:bg-surface-container-high transition-colors">Cancel</a>
+        </div>
+
+        <!-- Test Case Template -->
+        <template id="template-test-case">
+            <fieldset class="test-case-fieldset bg-surface-container-low border border-outline-variant rounded-xl p-4">
+                <legend class="font-label-caps text-label-caps text-on-surface-variant px-2">Test case <span class="test-case-number text-primary"></span></legend>
+                <div class="mb-4">
+                    <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Name</label>
+                    <div class="flex gap-2">
+                        <input type="text" class="test-case-name flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Test login functionality">
+                        <button type="button" class="js-remove-testcase px-3 py-2 rounded-lg border border-error/30 text-error font-label-caps text-label-caps hover:bg-error/10 transition-colors">Delete</button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">URL</label>
+                    <input type="text" class="test-case-url w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                        placeholder="e.g. https://www.example.com">
+                </div>
+                <div class="mb-2">
+                    <label class="font-body-sm text-body-sm text-on-surface-variant block mb-2">Steps</label>
+                    <div class="steps space-y-3"></div>
+                    <button type="button" class="js-add-step mt-2 px-3 py-1.5 rounded-lg border border-outline-variant text-on-surface-variant font-label-caps text-label-caps text-xs hover:bg-surface-container-high transition-colors">+ Add step</button>
+                </div>
+            </fieldset>
+        </template>
+
+        <!-- Step Template -->
+        <template id="template-step">
+            <fieldset class="step-fieldset bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+                <legend class="font-label-caps text-label-caps text-on-surface-variant px-2">Step <span class="step-number text-primary"></span></legend>
+                <div class="mb-3">
+                    <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Step name</label>
+                    <div class="flex gap-2">
+                        <input type="text" class="step-name flex-1 bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Click on the login button">
+                        <button type="button" class="js-remove-step px-2 py-1.5 rounded-lg border border-error/30 text-error font-label-caps text-label-caps text-xs hover:bg-error/10 transition-colors">Delete</button>
+                    </div>
+                </div>
+                <div class="expectation-and-notes">
+                    <div class="mb-2">
+                        <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Expectation (optional)</label>
+                        <input type="text" class="step-expectation w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. The login page should appear">
+                    </div>
+                    <div class="mb-2">
+                        <label class="font-body-sm text-body-sm text-on-surface-variant block mb-1">Notes (optional)</label>
+                        <input type="text" class="step-notes w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary"
+                            placeholder="e.g. Use the customer login button, not the reseller login button">
+                    </div>
+                </div>
+                <a href="#" class="js-add-expectation-and-notes font-body-sm text-body-sm text-primary hover:underline">+ Add Expectation & Notes</a>
+            </fieldset>
+        </template>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    add_test_case();
+});
+</script>
+{% endblock %}
