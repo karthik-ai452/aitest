@@ -16,6 +16,14 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* ─── No underline on any link ────────── */
+a {
+    text-decoration: none !important;
+}
+a:hover, a:active, a:focus, a:visited {
+    text-decoration: none !important;
+}
+
 /* ─── Material Symbols ────────────────────────────────────── */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

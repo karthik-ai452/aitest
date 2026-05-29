@@ -9,27 +9,63 @@
     <p class="font-body-md text-body-md text-on-surface-variant mt-1">Here's your testing overview for today.</p>
 </div>
 
+<!-- Stats Grid (3 cards — no Active Agents) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-5 hover:border-primary/40 transition-all">
+        <div class="flex items-center justify-between mb-3">
+            <div class="p-2.5 bg-primary-container/15 rounded-lg border border-primary/20">
+                <span class="material-symbols-outlined text-primary">collections_bookmark</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-sm">trending_up</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface">{{ stats.total_suites if stats else 0 }}</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Test Suites</p>
+    </div>
+
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-5 hover:border-primary/40 transition-all">
+        <div class="flex items-center justify-between mb-3">
+            <div class="p-2.5 bg-secondary-container/15 rounded-lg border border-secondary/20">
+                <span class="material-symbols-outlined text-secondary">history_toggle_off</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-sm">play_circle</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface">{{ stats.total_runs if stats else 0 }}</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Total Runs</p>
+    </div>
+
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-5 hover:border-primary/40 transition-all">
+        <div class="flex items-center justify-between mb-3">
+            <div class="p-2.5 bg-secondary/15 rounded-lg border border-secondary/20">
+                <span class="material-symbols-outlined text-secondary">check_circle</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-sm">percent</span>
+        </div>
+        <p class="font-display-lg text-display-lg text-on-surface">{{ stats.pass_rate if stats else 0 }}%</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Pass Rate</p>
+    </div>
+</div>
+
 <!-- Quick Actions -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <a href="/test_suites" class="group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40 transition-all">
+    <a href="/test_suites" class="group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40 transition-all no-underline">
         <div class="flex items-center gap-4 mb-3">
             <div class="p-3 bg-primary-container/15 rounded-xl border border-primary/20 group-hover:bg-primary-container/25 transition-colors">
                 <span class="material-symbols-outlined text-primary text-2xl">add_circle</span>
             </div>
             <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">Test Suites</h3>
-                <p class="font-body-sm text-body-sm text-on-surface-variant">Create and manage your test suites</p>
+                <h3 class="font-headline-md text-headline-md text-on-surface">Create Test Suite</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Set up a new suite of tests for your application</p>
             </div>
         </div>
     </a>
 
-    <a href="/test_runs" class="group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40 transition-all">
+    <a href="/test_runs" class="group bg-surface-container border border-outline-variant rounded-2xl p-6 hover:border-primary/40 transition-all no-underline">
         <div class="flex items-center gap-4 mb-3">
             <div class="p-3 bg-secondary-container/15 rounded-xl border border-secondary/20 group-hover:bg-secondary-container/25 transition-colors">
                 <span class="material-symbols-outlined text-secondary text-2xl">play_circle</span>
             </div>
             <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">Test Runs</h3>
+                <h3 class="font-headline-md text-headline-md text-on-surface">View Test Runs</h3>
                 <p class="font-body-sm text-body-sm text-on-surface-variant">Check the status of your recent test executions</p>
             </div>
         </div>

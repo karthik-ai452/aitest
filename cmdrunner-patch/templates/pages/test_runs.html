@@ -16,34 +16,31 @@
             </tr>
         </thead>
         <tbody>
-            {% if test_runs and test_runs | length > 0 %}
-            {% for run in test_runs %}
+            {% if runs and runs | length > 0 %}
+            {% for run in runs %}
             <tr class="border-b border-[#e2e8f0]">
                 <td class="py-3 px-4 text-[#4a5568]">{{ run.test_suite_name }}</td>
                 <td class="py-3 px-4">
-                    {% set status = run.status|string|lower %}
-                    {% if status == 'not_started' %}
+                    {% if run.status == 'not_started' %}
                     <span class="text-[#6b7280]">Not started</span>
-                    {% elif status == 'running' or status == 'in_progress' %}
+                    {% elif run.status == 'running' %}
                     <span class="text-[#3182ce]">Running</span>
-                    {% elif status == 'passed' or status == 'success' %}
+                    {% elif run.status == 'passed' %}
                     <span class="text-[#38a169]">Passed</span>
-                    {% elif status == 'failed' or status == 'failure' %}
+                    {% elif run.status == 'failed' %}
                     <span class="text-[#e53e3e]">Failure</span>
-                    {% elif status == 'timeout' %}
+                    {% elif run.status == 'timeout' %}
                     <span class="text-[#2d3748]">Timeout</span>
-                    {% elif status == 'stopped' %}
-                    <span class="text-[#2d3748]">Stopped</span>
                     {% else %}
                     <span class="text-[#2d3748]">{{ run.status | capitalize }}</span>
                     {% endif %}
                 </td>
                 <td class="py-3 px-4 text-[#4a5568] localdatetime">{{ run.created_at }}</td>
                 <td class="py-3 px-4">
-                    <a href="/test_runs/{{ run.id }}" class="hover:underline font-medium" style="color: #3182ce">View</a>
+                    <a href="/test_runs/{{ run.id }}" class=" font-medium" style="color: #3182ce">View</a>
                 </td>
                 <td class="py-3 px-4">
-                    <a href="#" class="hover:underline font-medium" style="color: #e53e3e"
+                    <a href="#" class=" font-medium" style="color: #e53e3e"
                        onclick="show_prompt('Delete test run', 'Are you sure you want to delete this test run?', {'Delete': () => { post_to_page('/test_runs/{{ run.id }}/delete') }, 'Cancel': () => { return; }}, {class: 'danger'}); return false;">Delete</a>
                 </td>
             </tr>

@@ -19,19 +19,20 @@
             </tr>
         </thead>
         <tbody>
-            {% if test_suites and test_suites | length > 0 %}
-            {% for suite in test_suites %}
+            {% if test_suites and test_suites | length > 0 or suites and suites | length > 0 %}
+            {% for suite in (test_suites or suites) %}
             <tr class="border-b border-[#e2e8f0]">
                 <td class="py-3 px-4 text-[#4a5568]">{{ suite.name }}</td>
                 <td class="py-3 px-4 text-[#4a5568] localdatetime">{{ suite.created_at }}</td>
                 <td class="py-3 px-4">
-                    <a href="/run_test_suite/{{ suite.id }}" class="hover:underline font-medium" style="color: #38a169">Run</a>
+                    <a href="#" class=" font-medium" style="color: #38a169"
+                       onclick="post_to_page('/test_suites/{{ suite.id }}/run'); return false;">Run</a>
                 </td>
                 <td class="py-3 px-4">
-                    <a href="/test_suites/{{ suite.id }}/edit" class="hover:underline font-medium" style="color: #3182ce">Edit</a>
+                    <a href="/test_suites/{{ suite.id }}/edit" class=" font-medium" style="color: #3182ce">Edit</a>
                 </td>
                 <td class="py-3 px-4">
-                    <a href="#" class="hover:underline font-medium" style="color: #e53e3e"
+                    <a href="#" class=" font-medium" style="color: #e53e3e"
                        onclick="show_prompt( 'Delete test suite', 'Are you sure you want to delete this test suite?', {'Delete': () => { post_to_page( '/test_suites/{{ suite.id }}/delete' ) }, 'Cancel': () => { return; }}, {class: 'danger'} ); return false;">Delete</a>
                 </td>
             </tr>
