@@ -30,10 +30,25 @@
     </button>
 </div>
 
+<!-- Status Message -->
+<div id="agent-status" class="hidden mb-4 px-4 py-3 rounded-xl bg-surface-container border border-outline-variant font-body-md text-body-md text-on-surface-variant">
+    <span class="material-symbols-outlined text-base align-middle mr-2">info</span>
+    <span id="agent-status-text"></span>
+</div>
+
+<!-- Failure Dialog -->
+<div id="failure-dialog" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]">
+    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 w-full max-w-lg shadow-2xl">
+        <h3 class="font-headline-md text-headline-md text-error mb-2">Test Failed</h3>
+        <p id="failure-message" class="font-body-md text-body-md text-on-surface mb-6"></p>
+        <div id="failure-buttons" class="flex flex-wrap gap-3"></div>
+    </div>
+</div>
+
 <!-- Two-Panel Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6" style="min-height: 500px;">
     <!-- Left Panel: Test Cases -->
-    <div class="bg-surface-container border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+    <div id="test-case-panel" class="bg-surface-container border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px] overflow-auto">
         <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-4">description</span>
         <h3 class="font-headline-md text-headline-md text-on-surface mb-2">No test cases loaded</h3>
         <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
@@ -43,11 +58,12 @@
     </div>
 
     <!-- Right Panel: Browser Display -->
-    <div class="bg-[#1a1a1a] border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px]">
+    <div id="browser-panel" class="bg-[#1a1a1a] border border-outline-variant rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[400px] relative">
         <span class="material-symbols-outlined text-white/50 text-5xl mb-4">language</span>
         <p class="font-body-lg text-body-lg text-white/70">
             Browser will be displayed here.
         </p>
+        <iframe id="novnc-frame" class="hidden absolute inset-0 w-full h-full rounded-2xl" style="border: 0;"></iframe>
     </div>
 </div>
 
@@ -59,9 +75,181 @@
 <script src="{{ url_for('static', filename='public.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <script>
-// Wire up the upload button to trigger the hidden file input
+// ─── Upload button triggers file input ─────────────────────
 document.getElementById('btn-upload').addEventListener('click', function() {
     document.getElementById('file-upload-input').click();
 });
+
+// ─── SSE Event Source for test run ─────────────────────────
+(function() {
+    var params = new URLSearchParams(window.location.search);
+    var suiteId = params.get('suite_id');
+    var eventSource = null;
+
+    if (suiteId) {
+        startRunStream(suiteId);
+    }
+
+    function startRunStream(id) {
+        var statusEl = document.getElementById('agent-status');
+        var statusText = document.getElementById('agent-status-text');
+        statusEl.classList.remove('hidden');
+        statusText.textContent = 'Starting test run...';
+
+        eventSource = new EventSource('/run_test_suite/' + id);
+
+        eventSource.addEventListener('message', function(e) {
+            var data;
+            try { data = JSON.parse(e.data); } catch(err) { return; }
+
+            switch(data.type) {
+                case 'in_queue':
+                    statusText.textContent = data.message || 'Waiting in queue...';
+                    break;
+                case 'run_started':
+                    statusText.textContent = 'Run started (UUID: ' + data.uuid + ')';
+                    break;
+                case 'viewer_started':
+                    statusText.textContent = 'Browser viewer connected on port ' + data.port;
+                    var frame = document.getElementById('novnc-frame');
+                    frame.src = 'http://localhost:' + data.port + '/vnc.html?autoconnect=true&password=' + encodeURIComponent(data.password || '');
+                    frame.classList.remove('hidden');
+                    break;
+                case 'viewer_stopped':
+                    statusText.textContent = 'Viewer disconnected.';
+                    document.getElementById('novnc-frame').classList.add('hidden');
+                    break;
+                case 'progress':
+                    statusText.textContent = 'Running tests...';
+                    if (data.progress && data.progress.test_cases) {
+                        updateTestCasePanel(data.progress.test_cases);
+                    }
+                    break;
+                case 'action_message':
+                    // Show action messages in status
+                    if (data.message) {
+                        statusText.textContent = data.message;
+                    }
+                    break;
+                case 'finished':
+                    statusText.textContent = 'Run finished — status: ' + (data.status || 'unknown');
+                    eventSource.close();
+                    eventSource = null;
+                    break;
+                case 'failure':
+                    statusText.textContent = 'Failure: ' + (data.message || 'Unknown error');
+                    showFailureDialog(data.message, data.choices);
+                    break;
+                case 'error':
+                    statusText.textContent = 'Error: ' + (data.message || 'Unknown error');
+                    eventSource.close();
+                    eventSource = null;
+                    break;
+                case 'connection_error':
+                    statusText.textContent = 'Connection error. Please try again.';
+                    eventSource.close();
+                    eventSource = null;
+                    break;
+                case 'generating_summary':
+                    statusText.textContent = 'Generating AI summary...';
+                    break;
+                case 'learning':
+                    statusText.textContent = 'AI is learning from this run...';
+                    break;
+                case 'heartbeat':
+                    break;
+            }
+        });
+
+        eventSource.addEventListener('error', function() {
+            statusText.textContent = 'Connection lost.';
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+        });
+    }
+
+    // ─── Stop button ────────────────────────────────────────────
+    document.getElementById('btn-stop').addEventListener('click', function() {
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+        }
+        var statusText = document.getElementById('agent-status-text');
+        statusText.textContent = 'Run stopped.';
+        document.getElementById('novnc-frame').classList.add('hidden');
+    });
+
+    // ─── Update test case panel with progress ──────────────────
+    function updateTestCasePanel(test_cases) {
+        var panel = document.getElementById('test-case-panel');
+        var html = '<div class="w-full text-left space-y-4">';
+        test_cases.forEach(function(tc) {
+            html += '<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant">';
+            html += '<p class="font-body-md text-body-md text-on-surface font-semibold mb-3">' + (tc.name || 'Test Case') + '</p>';
+            if (tc.steps) {
+                html += '<div class="space-y-2">';
+                tc.steps.forEach(function(step) {
+                    var icon = 'radio_button_unchecked';
+                    var color = 'text-on-surface-variant';
+                    var bg = '';
+                    if (step.status === 'passed' || step.status === 'success') {
+                        icon = 'check_circle'; color = 'text-secondary'; bg = 'bg-secondary/5';
+                    } else if (step.status === 'failed' || step.status === 'failure') {
+                        icon = 'cancel'; color = 'text-error'; bg = 'bg-error/5';
+                    } else if (step.status === 'in_progress' || step.status === 'running') {
+                        icon = 'pending'; color = 'text-primary'; bg = 'bg-primary/5';
+                    }
+                    html += '<div class="flex items-center gap-2.5 ' + color + ' ' + bg + ' rounded-lg px-3 py-2">';
+                    html += '<span class="material-symbols-outlined text-lg">' + icon + '</span>';
+                    html += '<span class="font-body-md text-body-md">' + (step.name || 'Step') + '</span>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+        panel.innerHTML = html;
+        panel.classList.remove('items-center', 'justify-center', 'text-center');
+    }
+
+    // ─── Failure dialog with choices ───────────────────────────
+    function showFailureDialog(message, choices) {
+        if (!choices) return;
+        var dialog = document.getElementById('failure-dialog');
+        var msgEl = document.getElementById('failure-message');
+        var btnsEl = document.getElementById('failure-buttons');
+
+        msgEl.textContent = message || 'An error occurred during the test run.';
+        btnsEl.innerHTML = '';
+
+        var choiceNames = Object.keys(choices);
+        choiceNames.forEach(function(choice) {
+            var btn = document.createElement('button');
+            btn.textContent = choice;
+            btn.className = 'px-4 py-2 rounded-lg font-label-caps text-label-caps border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors';
+            if (choice.toLowerCase() === 'stop') {
+                btn.classList.add('border-error/50', 'text-error');
+            }
+            btn.addEventListener('click', function() {
+                dialog.classList.add('hidden');
+                // Send action to agent
+                var runUuid = new URLSearchParams(window.location.search).get('run_uuid');
+                if (runUuid) {
+                    var formData = new FormData();
+                    formData.append('run_uuid', runUuid);
+                    formData.append('action', choices[choice]);
+                    formData.append('message', '');
+                    fetch('/agent_action', { method: 'POST', body: formData });
+                }
+            });
+            btnsEl.appendChild(btn);
+        });
+
+        dialog.classList.remove('hidden');
+    }
+})();
 </script>
 {% endblock %}
