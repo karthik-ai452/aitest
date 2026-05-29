@@ -246,6 +246,16 @@ async def docs():
     return await render_template('docs.html')
 
 
+@app.route('/docs/ngrok')
+async def docs_ngrok():
+    return await render_template('docs_ngrok.html')
+
+
+@app.route('/docs/ngrok')
+async def docs_ngrok():
+    return await render_template('docs_ngrok.html')
+
+
 if __name__ == '__main__':
     from hypercorn.config import Config
     from hypercorn.asyncio import serve
